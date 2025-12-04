@@ -1,0 +1,456 @@
+<div class="loading-overlay" *ngIf="isLoading || isPDFGenerate">
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="70"
+    color="primary">
+  </mat-progress-spinner>
+  <p>{{ loadingMessage }}</p>
+</div>
+<div [ngStyle]="data.modulName === 'IND' ? {'max-height.px': 300, 'overflow-y': 'auto'} : {}">
+  <table class="table table-bordered" id="revenusTable">
+    <thead>
+      <tr>
+        <th class="head-title" [colSpan]="3+anneeList.length" style="text-align: center;">{{ titleTable }}</th>
+      </tr>
+      <tr style="height: 15px;">
+      </tr>
+      <tr>
+        <th *ngIf="data.modulName === 'TRE' || data.modulName === 'IND'"></th>
+        <th></th>
+        <th class="head-table" style="text-align: center;" *ngFor="let annee of anneeList; trackBy: trackByIndex">N + {{ annee }}</th>
+        <th style="width: 15px;"></th>
+        <th class="head-table" style="text-align: center;"  *ngIf="data.modulName !== 'IND'">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Ligne unique pour le taux de vacance -->
+      <tr class="groupe-row" *ngIf="data.modulName === 'REV' || data.modulName === 'DEP'">
+        <td class="nature-elt">
+          <strong *ngIf="data.modulName === 'REV'">Taux de vacance prévisionnel (%)</strong>
+          <strong *ngIf="data.modulName === 'DEP'">Indexation annuelle estime (%)</strong>
+        </td>
+        <ng-container *ngIf="data.modulName === 'REV'">
+          <td class="nature-elt" *ngFor="let taux of croissanceVacance; trackBy: trackByIndex">
+            <strong>{{ formatNumber(taux?.montant || 0) }}%</strong>
+          </td>
+        </ng-container>
+        <ng-container *ngIf="data.modulName === 'DEP'">
+          <td class="nature-elt" *ngFor="let taux of indexationAnnuel; trackBy: trackByIndex">
+            <strong>{{ formatNumber(taux?.montant || 0) }}%</strong>
+          </td>
+        </ng-container>
+        <td ></td>
+        <td class="nature-elt"></td>
+      </tr>
+
+      <!-- Boucle sur les groupes -->
+      <ng-container *ngIf="data.modulName !== 'TRE' && data.modulName !== 'IND'">
+
+        <ng-container *ngIf="data.modulName === 'CRT'">
+          <tr class="groupe-row">
+            <td class="head-table">
+              <strong>Revenus prévisionnels</strong>
+            </td>
+            <td class="head-table" *ngFor="let total of totauxParAnnee; trackBy: trackByIndex">
+              <strong >{{ formatNumber(total) }}</strong>
+            </td>
+
+            <td ></td>
+            <td class="head-table">
+              <strong>{{ formatNumber(totalGlobal) }}</strong>
+            </td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngFor="let groupe of groupes; trackBy: trackByIndex">
+
+          <tr class="groupe-row">
+            <td [ngClass]="{
+              'nature-elt': data.modulName !== 'CRT',
+              '': data.modulName === 'CRT'
+            }">
+              <strong>{{ groupe.nature.nomNature }}</strong>
+            </td>
+            <td td [ngClass]="{
+              'nature-elt': data.modulName !== 'CRT',
+              '': data.modulName === 'CRT'
+            }" *ngFor="let total of groupe.totauxAnnee; trackBy: trackByIndex">
+              <strong>{{ formatNumber(total) }}</strong>
+            </td>
+
+            <td ></td>
+            <td td [ngClass]="{
+              'nature-elt': data.modulName !== 'CRT',
+              '': data.modulName === 'CRT'
+            }">
+              <strong>{{ formatNumber(groupe.totalNature) }}</strong>
+            </td>
+          </tr>
+
+          <ng-container *ngIf="data.modulName !== 'CRT'">
+            <tr *ngFor="let elt of groupe.elements; trackBy: trackByIndex">
+              <td>{{ elt.nom }}</td>
+              <td *ngFor="let montant of elt.montant; trackBy: trackByIndex">
+                {{ formatNumber(montant) }}
+              </td>
+              <td></td>
+              <td>{{ formatNumber(getTotalByElt(elt)) }}</td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+
+        <ng-container *ngIf="data.modulName === 'CRT'">
+          <tr class="groupe-row">
+            <td class="head-table">
+              <strong>Dépenses d'exploitation</strong>
+            </td>
+            <td class="head-table" *ngFor="let total of totauxParAnnee_DEP; trackBy: trackByIndex">
+              <strong >{{ formatNumber(total) }}</strong>
+            </td>
+
+            <td ></td>
+            <td class="head-table">
+              <strong>{{ formatNumber(totalGlobal_DEP) }}</strong>
+            </td>
+          </tr>
+
+
+          <ng-container *ngFor="let groupe of groupes_DEP; trackBy: trackByIndex">
+            <tr class="groupe-row">
+              <td >
+                <strong>{{ groupe.nature.nomNature }}</strong>
+              </td>
+              <td class="" *ngFor="let total of groupe.totauxAnnee; trackBy: trackByIndex">
+                <strong>{{ formatNumber(total) }}</strong>
+              </td>
+
+              <td ></td>
+              <td class="">
+                <strong>{{ formatNumber(groupe.totalNature) }}</strong>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+      </ng-container>
+
+      <ng-container *ngIf="data.modulName === 'IND'">
+        <ng-container *ngFor="let groupe of groupes_IND_CLE">
+          <tr *ngFor="let element of groupe.elements; let i = index">
+            <!-- Affiche nature.nomNature uniquement sur la 1ère ligne du groupe -->
+            <td class="head-table" *ngIf="i === 0" [attr.rowspan]="groupe.elements.length">
+              <strong>{{ groupe.nature.nomNature }}</strong>
+            </td>
+            <td class="nature-elt">{{ element.sousNature.nomSousNature }}</td>
+            <td *ngFor="let total of element.totauxAnnee; trackBy: trackByIndex">{{ formatNumber(total) }}</td>
+            <th style="width: 15px;"></th>
+          </tr>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="data.modulName === 'TRE'">
+        <ng-container *ngIf="groupes_IN?.length">
+
+          <tr>
+            <td [attr.rowspan]="getRowSpan(groupes_IN)+1" class="fusion-cell nature-elt">
+              <strong>Encaissements</strong>
+            </td>
+
+            <td class="nature-elt">
+              <strong>{{ groupes_IN[0].nature.nomNature }}</strong>
+            </td>
+            <td class="nature-elt" *ngFor="let total of groupes_IN[0].totauxAnnee; trackBy: trackByIndex">
+              <strong>{{ formatNumber(total) }}</strong>
+            </td>
+            <td></td>
+            <td class="nature-elt">
+              <strong>{{ formatNumber(groupes_IN[0].totalNature) }}</strong>
+            </td>
+          </tr>
+
+
+          <!-- Boucle sur tous les groupes -->
+          <ng-container *ngFor="let groupe of groupes_IN; let i = index; trackBy: trackByIndex">
+            <!-- Sauter le premier groupe, déjà rendu -->
+            <ng-container *ngIf="i > 0">
+              <tr class="groupe-row">
+                <td class="nature-elt">
+                  <strong>{{ groupe.nature.nomNature }}</strong>
+                </td>
+                <td class="nature-elt" *ngFor="let total of groupe.totauxAnnee; trackBy: trackByIndex">
+                  <strong>{{ formatNumber(total) }}</strong>
+                </td>
+                <td></td>
+                <td class="nature-elt">
+                  <strong>{{ formatNumber(groupe.totalNature) }}</strong>
+                </td>
+              </tr>
+            </ng-container>
+
+            <!-- Lignes des éléments du groupe -->
+            <tr *ngFor="let elt of groupe.elements; trackBy: trackByIndex">
+              <td>{{ elt.nom }}</td>
+              <td *ngFor="let montant of elt.montant; trackBy: trackByIndex">
+                {{ formatNumber(montant) }}
+              </td>
+              <td></td>
+              <td>{{ formatNumber(getTotalByElt(elt)) }}</td>
+            </tr>
+          </ng-container>
+
+          <!-- Ligne de total -->
+          <tr class="groupe-row">
+            <td class="head-table">
+              <strong>Total encaissements</strong>
+            </td>
+            <td class="head-table" *ngFor="let total of totauxParAnnee_IN; trackBy: trackByIndex">
+              <strong>{{ formatNumber(total) }}</strong>
+            </td>
+            <td></td>
+            <td class="head-table">
+              <strong>{{ formatNumber(totalGlobal_IN) }}</strong>
+            </td>
+          </tr>
+        </ng-container>
+
+
+
+        <ng-container *ngIf="groupes_OUT?.length">
+          <tr>
+            <!-- 🟩 Une seule cellule fusionnée -->
+            <td [attr.rowspan]="getRowSpan(groupes_OUT)+1" class="fusion-cell nature-elt">
+              <strong>Décaissements</strong>
+            </td>
+
+            <!-- Première ligne du premier groupe -->
+            <td class="nature-elt">
+              <strong>{{ groupes_OUT[0].nature.nomNature }}</strong>
+            </td>
+            <td class="nature-elt" *ngFor="let total of groupes_OUT[0].totauxAnnee; trackBy: trackByIndex">
+              <strong>{{ formatNumber(total) }}</strong>
+            </td>
+            <td></td>
+            <td class="nature-elt">
+              <strong>{{ formatNumber(groupes_OUT[0].totalNature) }}</strong>
+            </td>
+          </tr>
+
+          <ng-container *ngFor="let groupe of groupes_OUT; let i = index; trackBy: trackByIndex">
+            <ng-container *ngIf="i > 0">
+              <tr class="groupe-row">
+                <td class="nature-elt">
+                  <strong>{{ groupe.nature.nomNature }}</strong>
+                </td>
+                <td class="nature-elt" *ngFor="let total of groupe.totauxAnnee; trackBy: trackByIndex">
+                  <strong>{{ formatNumber(total) }}</strong>
+                </td>
+
+                <td ></td>
+                <td class="nature-elt" class="nature-elt">
+                  <strong>{{ formatNumber(groupe.totalNature) }}</strong>
+                </td>
+              </tr>
+            </ng-container>
+
+            <tr *ngFor="let elt of groupe.elements; trackBy: trackByIndex">
+              <td>{{ elt.nom }}</td>
+              <td *ngFor="let montant of elt.montant; trackBy: trackByIndex">
+                {{ formatNumber(montant) }}
+              </td>
+              <td></td>
+              <td>{{ formatNumber(getTotalByElt(elt)) }}</td>
+            </tr>
+          </ng-container>
+
+          <tr class="groupe-row">
+            <td class="head-table">
+              <strong>Total décaissements</strong>
+            </td>
+            <td class="head-table" *ngFor="let total of totauxParAnnee_OUT; trackBy: trackByIndex">
+              <strong>{{ formatNumber(total) }}</strong>
+            </td>
+            <td ></td>
+            <td class="head-table"><strong>{{ formatNumber(totalGlobal_OUT) }}</strong></td>
+          </tr>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="data.modulName !== 'IND'">
+        <!-- Total -->
+        <tr class="groupe-row">
+          <td *ngIf="data.modulName === 'TRE'"></td>
+          <td class="head-table">
+            <strong *ngIf="data.modulName === 'REV'">Total des produits</strong>
+            <strong *ngIf="data.modulName === 'DEP'">Total charges</strong>
+            <strong *ngIf="data.modulName === 'CON'">Total investissement annuel</strong>
+            <strong *ngIf="data.modulName === 'FIN'">Total financement annuel</strong>
+            <strong *ngIf="data.modulName === 'TRE'">Solde mensuel / annuel</strong>
+            <strong *ngIf="data.modulName === 'CRT'">Résultat net</strong>
+          </td>
+
+          <ng-container *ngIf="data.modulName !== 'TRE' && data.modulName !== 'CRT'">
+            <td class="head-table" *ngFor="let total of totauxParAnnee; trackBy: trackByIndex">
+              <strong >{{ formatNumber(total) }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="data.modulName === 'TRE'">
+            <td
+              *ngFor="let _ of totauxParAnnee_IN; let i = index; trackBy: trackByIndex"
+              [ngClass]="{
+                'head-table': ((totauxParAnnee_IN[i] - totauxParAnnee_OUT[i] || 0) >= 0),
+                'high-value': ((totauxParAnnee_IN[i] - totauxParAnnee_OUT[i] || 0) < 0)
+              }"
+            >
+              <strong>
+                {{ formatNumber(totauxParAnnee_IN[i] - totauxParAnnee_OUT[i]) }}
+              </strong>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="data.modulName === 'CRT'">
+            <td
+              *ngFor="let _ of totauxParAnnee; let i = index; trackBy: trackByIndex"
+              [ngClass]="{
+                'head-table': ((totauxParAnnee[i] - totauxParAnnee_DEP[i] || 0) >= 0),
+                'high-value': ((totauxParAnnee[i] - totauxParAnnee_DEP[i] || 0) < 0)
+              }"
+            >
+              <strong>
+                {{ formatNumber(totauxParAnnee[i] - totauxParAnnee_DEP[i]) }}
+              </strong>
+            </td>
+          </ng-container>
+          <td ></td>
+          <ng-container *ngIf="data.modulName !== 'TRE'">
+            <td class="head-table"><strong>{{ formatNumber(totalGlobal) }}</strong></td>
+          </ng-container>
+          <ng-container *ngIf="data.modulName === 'TRE'">
+            <td class="head-table"><strong>{{ formatNumber(totalGlobal_IN-totalGlobal_OUT) }}</strong></td>
+          </ng-container>
+        </tr>
+
+
+        <!-- Cumul -->
+        <tr class="groupe-row" *ngIf="data.modulName === 'CON' || data.modulName === 'FIN' || data.modulName === 'TRE' || data.modulName === 'CRT'">
+          <td *ngIf="data.modulName === 'TRE'"></td>
+          <td class="head-table">
+            <strong *ngIf="data.modulName === 'CON'">Cumul investissement</strong>
+            <strong *ngIf="data.modulName === 'FIN'">Cumul financement</strong>
+            <strong *ngIf="data.modulName === 'TRE'">Cumul trésorerie</strong>
+            <strong *ngIf="data.modulName === 'CRT'">Cumul résultat</strong>
+          </td>
+          <ng-container *ngIf="data.modulName !== 'TRE' && data.modulName !== 'CRT'">
+            <td
+              *ngFor="let cumul of cumulMontants; trackBy: trackByIndex"
+              [ngClass]="{
+                'head-table': ((cumul || 0) >= 0),
+                'high-value': ((cumul || 0) < 0)
+              }"
+            >
+              <strong>
+                {{ formatNumber(cumul) }}
+              </strong>
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="data.modulName === 'CRT'">
+            <td
+              *ngFor="let _ of cumulMontants; let i = index; trackBy: trackByIndex"
+              [ngClass]="{
+                'head-table': ((cumulMontants[i] - cumulMontants_DEP[i] || 0) >= 0),
+                'high-value': ((cumulMontants[i] - cumulMontants_DEP[i] || 0) < 0)
+              }"
+            >
+              <strong>
+                {{ formatNumber(cumulMontants[i] - cumulMontants_DEP[i]) }}
+              </strong>
+            </td>
+          </ng-container>
+          <ng-container *ngIf="data.modulName === 'TRE'">
+            <td
+              *ngFor="let _ of cumulMontants_IN; let i = index; trackBy: trackByIndex"
+              [ngClass]="{
+                'head-table': ((cumulMontants_IN[i] - cumulMontants_OUT[i] || 0) >= 0),
+                'high-value': ((cumulMontants_IN[i] - cumulMontants_OUT[i] || 0) < 0)
+              }"
+            >
+              <strong>
+                {{ formatNumber(cumulMontants_IN[i] - cumulMontants_OUT[i]) }}
+              </strong>
+            </td>
+          </ng-container>
+
+          <td style="width: 15px;"></td>
+          <td class="head-table">
+            <strong *ngIf="data.modulName !== 'TRE' && data.modulName !== 'CRT'">{{ formatNumber(cumulMontants[cumulMontants.length - 1]) }}</strong>
+            <strong *ngIf="data.modulName === 'TRE'">{{ formatNumber(cumulMontants_IN[cumulMontants_IN.length - 1] - cumulMontants_OUT[cumulMontants_OUT.length - 1]) }}</strong>
+            <strong *ngIf="data.modulName === 'CRT'">{{ formatNumber(cumulMontants[cumulMontants.length - 1] - cumulMontants_DEP[cumulMontants_DEP.length - 1]) }}</strong>
+          </td>
+        </tr>
+
+
+        <!-- Différence financement - investissement -->
+        <tr class="groupe-row" *ngIf="data.modulName === 'FIN'">
+          <td class="head-table">
+            <strong>Contrôle (financement > investissement)</strong>
+          </td>
+          <td *ngFor="let diff of diffCumulMontants; trackBy: trackByIndex"
+              [ngClass]="{ 'head-table': diff >= 0, 'high-value': diff < 0 }">
+            <strong>{{ formatNumber(diff) }}</strong>
+          </td>
+          <td ></td>
+          <td [ngClass]="{
+                'head-table': ((diffCumulMontants.at(-1) || 0) >= 0),
+                'high-value': ((diffCumulMontants.at(-1) || 0) < 0)
+              }">
+            <strong>{{ formatNumber(diffCumulMontants.at(-1) || 0) }}</strong>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+<mat-dialog-actions *ngIf="data.modulName === 'IND'">
+  <div class="form-group row">
+    <label for="eltGraph" class="col-sm-2 col-form-label"> Élément </label>
+    <div class="col-sm-4">
+      <select class="form-control select2 select2-hidden-accessible"
+      style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+      [(ngModel)]="eltGraph"
+      (change)="onTypeGraphChange()"
+      name="eltGraph">
+        <option value="" disabled selected value="-5">-- Sélectionnez un element --</option>
+        <option *ngFor="let elt of tousElements" [ngValue]="elt.id">
+          {{ elt.nom }}
+        </option>
+      </select>
+    </div>
+
+    <label for="typeGraph" class="col-sm-2 col-form-label"> Type </label>
+    <div class="col-sm-4">
+      <select class="form-control select2 select2-hidden-accessible"
+      style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+      [(ngModel)]="chartType"
+      (change)="onTypeGraphChange()"
+      name="chartType">
+        <option value="" disabled selected>-- Sélectionnez un type de graph --</option>
+        <option *ngFor="let elt of listTypeGraph" [ngValue]="elt.key">
+          {{ elt.label }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+</mat-dialog-actions>
+
+<div #graphContainer *ngIf="data.modulName === 'IND'">
+  <canvas #graphCanvas id="graphCanvas"
+          baseChart
+          [data]="chartData"
+          [options]="chartOptions"
+          [type]="chartType">
+  </canvas>
+</div>

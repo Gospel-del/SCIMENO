@@ -1,0 +1,58 @@
+mat-dialog-content {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+mat-dialog-actions button {
+  margin-left: 10px;
+}
+
+tr.selected {
+  background-color: #d1e7fd; /* bleu clair */
+  font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin: 2em 0;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.actions {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.filter-input {
+  width: 200px;
+}
+
+tr.selected {
+  background-color: #d1e7fd;
+  font-weight: bold;
+}
+
+table.mat-table {
+  width: 100%;
+}

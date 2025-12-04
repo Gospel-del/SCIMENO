@@ -1,0 +1,128 @@
+
+<mat-progress-spinner *ngIf="isLoading"
+  mode="indeterminate"
+  diameter="50"
+  style="display: block; margin: 0 auto;">
+</mat-progress-spinner>
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+<form
+  class="form-horizontal"
+  *ngIf="regleCalcul && !isLoading"
+  (ngSubmit)="onSubmit()"
+  #natureForm="ngForm"
+>
+  <div class="card-body">
+    <!-- Champ texte simple -->
+    <div class="form-group row">
+      <label for="nomSousNature" class="col-sm-2 col-form-label">Nom</label>
+      <div class="col-sm-4">
+        <select2
+          class="form-control"
+          required
+          [data]="data"
+          [(ngModel)]="selectedSousNatureId"
+          name="selectedSousNatureId"
+          [styleMode]="'noStyle'"
+          [placeholder]="'Sélectionner une nature'"
+        >
+        </select2>
+      </div>
+
+      <label for="indicateurID" class="col-sm-2 col-form-label">Indicateur ID</label>
+      <div class="col-sm-4">
+        <select class="form-control select2 select2-hidden-accessible"
+        style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+        [(ngModel)]="regleCalcul.typeCalcul"
+        required
+        name="typeCalcul">
+          <option value="" disabled selected>-- Sélectionnez une categorie --</option>
+
+          <option *ngFor="let type of typeRegleList" [ngValue]="type.key">
+            {{ type.label }}
+          </option>
+
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+
+      <label class="col-sm-2 col-form-label">Formule actuelle </label>
+      <div class="col-sm-12">
+        <div class="formule-box" id="formule">{{ formule || '--- vide ---' }}</div>
+        <button type="button" class="clear col-sm-12" (click)="clearFormula()">Effacer</button>
+      </div>
+
+    </div>
+
+
+    <div class="form-group row">
+      <label class="col-sm-2 col-form-label">Chiffres</label>
+      <div class="col-sm-2">
+        <button type="button" *ngFor="let n of [1,2,3,4,5,6,7,8,9,0]" (click)="addElement(n.toString())">{{ n }}</button>
+        <button type="button" (click)="addElement('.')">.</button>
+      </div>
+
+      <label class="col-sm-2 col-form-label">Opérateurs</label>
+      <div class="col-sm-2">
+        <button type="button" (click)="addElement(' + ')">+</button>
+        <button type="button" (click)="addElement(' - ')">-</button>
+        <button type="button" (click)="addElement(' * ')">*</button>
+        <button type="button" (click)="addElement(' / ')">/</button>
+        <button type="button" (click)="addElement(' .^ ')">^</button>
+        <button type="button" (click)="addElement('(')">(</button>
+        <button type="button" (click)="addElement(')')">)</button>
+        <button type="button" (click)="addElement(' ANNEE ')">ANNEE</button>
+      </div>
+
+      <label class="col-sm-2 col-form-label">Fonctions</label>
+      <div class="col-sm-2">
+        <button type="button" (click)="addElement('SOMME(')">SOMME(</button>
+        <!--
+        <button type="button" (click)="addElement('MOYENNE(')">MOYENNE(</button>
+        <button type="button" (click)="addElement('MIN(')">MIN(</button>
+        <button type="button" (click)="addElement('MAX(')">MAX(</button>
+        -->
+        <button type="button" (click)="addElement('CUMMUL(')">CUMMUL(</button>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="functions row">
+      <label class="col-sm-2 col-form-label">Liste des natures</label>
+      <div class="duallistbox-container" style="display:flex; gap: 1rem; align-items: center;">
+        <div class="list-box" style="flex: 1;">
+          <select multiple size="10" class="form-control" style="width:100%">
+            <option *ngFor="let item of natures; trackBy: trackByNatureId"
+            [disabled]="item.idNature.toString() === selectedSousNatureId"
+            (dblclick)="addElementNature(item)">
+              {{ item.nomNature }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- card-footer -->
+  <div class="card-footer">
+    <button
+      type="submit"
+      class="btn btn-info"
+      [disabled]="!natureForm.form.valid"
+    >
+      {{bSaveName}}
+    </button>
+    <button type="button" class="btn btn-secondary float-end" (click)="close()">Fermer</button>
+  </div>
+  <!-- /.card-footer -->
+</form>

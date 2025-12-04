@@ -1,0 +1,136 @@
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+<!-- Header avec navigation par onglets style Word -->
+
+<nav class="main-header navbar navbar-expand custom-navbar">
+
+  <!-- Logo -->
+  <a class="navbar-brand brand-zone" routerLink="/dashboard">
+    <img src="assets/img/AdminLTELogo.png" alt="Logo" class="brand-image">
+    <span class="brand-text">SCI Mermo</span>
+  </a>
+
+  <!-- Menu principal (onglets) -->
+  <div class="navbar-nav ml-auto menu-zone">
+    <div class="nav-item"
+         *ngFor="let menu of structuredMenu">
+      <a class="nav-link nav-tab"
+         (click)="onMenuClick(menu.nameClick || ''); $event.preventDefault()">
+        <i class="{{menu.iconClasses}}"></i>
+        {{menu.name}}
+      </a>
+    </div>
+  </div>
+
+  <!-- Menu utilisateur -->
+  <ul class="navbar-nav user-zone">
+    <li class="nav-item dropdown user-dropdown">
+      <a class="nav-link user-toggle" href="#" role="button" data-toggle="dropdown">
+        <img src="src/assets/img/user2-160x160.png" alt="User Avatar" class="avatar">
+        <span *ngIf="currentUser$ | async as user">{{ user.prenom }} {{ user.nom }}</span>
+      </a>
+
+      <div class="dropdown-menu dropdown-menu-right user-dropdown-menu">
+
+        <a class="dropdown-item" (click)="openPasswordModal()">
+          <i class="fas fa-lock"></i> Changer le mot de passe
+        </a>
+
+        <a class="dropdown-item" routerLink="/auth-test">
+          <i class="fas fa-shield-alt"></i> Profil
+        </a>
+
+        <div class="dropdown-divider"></div>
+
+        <a class="dropdown-item logout" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </a>
+
+      </div>
+    </li>
+  </ul>
+</nav>
+
+
+<!-- Modal AdminLTE pour changer le mot de passe -->
+<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title">Modifier votre mot de passe</h5>
+      </div>
+
+      <div class="modal-body">
+
+        <form [formGroup]="passwordForm">
+
+          <!-- Ancien mot de passe -->
+          <div class="form-group">
+            <label>Ancien mot de passe</label>
+            <div class="input-group">
+              <input [type]="showOld ? 'text' : 'password'" class="form-control" formControlName="oldPassword">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-secondary" (click)="showOld = !showOld">
+                  <i class="fas" [class.fa-eye]="!showOld" [class.fa-eye-slash]="showOld"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nouveau mot de passe -->
+          <div class="form-group">
+            <label>Nouveau mot de passe</label>
+            <div class="input-group">
+              <input [type]="showNew ? 'text' : 'password'" class="form-control" formControlName="newPassword" (input)="checkStrength()">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-secondary" (click)="showNew = !showNew">
+                  <i class="fas" [class.fa-eye]="!showNew" [class.fa-eye-slash]="showNew"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="strength-bar">
+              <div [class]="strength"></div>
+            </div>
+            <small>{{ strengthLabel }}</small>
+          </div>
+
+          <!-- Confirmation -->
+          <div class="form-group">
+            <label>Confirmer le mot de passe</label>
+            <div class="input-group">
+              <input [type]="showConfirm ? 'text' : 'password'" class="form-control" formControlName="confirmPassword">
+              <div class="input-group-append">
+                <button type="button" class="btn btn-secondary" (click)="showConfirm = !showConfirm">
+                  <i class="fas" [class.fa-eye]="!showConfirm" [class.fa-eye-slash]="showConfirm"></i>
+                </button>
+              </div>
+            </div>
+
+            <small class="text-danger" *ngIf="passwordMismatch">
+              ⚠️ Les mots de passe ne correspondent pas.
+            </small>
+          </div>
+
+        </form>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="closePasswordModal()" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-primary"
+          [disabled]="passwordForm.invalid || passwordMismatch"
+          (click)="submitPassword()">
+          Enregistrer
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

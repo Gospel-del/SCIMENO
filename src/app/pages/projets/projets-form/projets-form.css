@@ -1,0 +1,174 @@
+.input-date {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  color: #333;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.input-date:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Style placeholder si nécessaire */
+.input-date::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.valeur-opt {
+  font-size: 0.75em;      /* texte plus petit */
+  line-height: 1.5;         /* réduit la hauteur verticale */
+  display: block;         /* force le retour à la ligne sous l'input */
+  margin-top: 5px;        /* petit espace au-dessus */
+  color: #666;            /* optionnel : un gris doux */
+}
+
+.table-scroll-wrapper {
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.table-scroll-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  /*table-layout: fixed; /* fixe la largeur des colonnes */
+}
+
+.table-scroll-wrapper th,
+.table-scroll-wrapper td {
+  white-space: nowrap;       /* empêche le texte de passer à la ligne */
+  padding: 8px 12px;
+  min-width: 200px;          /* largeur minimale de chaque cellule */
+  overflow: hidden;
+  text-overflow: ellipsis;   /* ajoute "..." si le texte dépasse */
+  text-align: center;
+}
+
+/* Fixe l’en-tête */
+.table-scroll-wrapper thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #f8f9fa;
+  border-bottom: 2px solid #ccc;
+}
+
+/*
+.dropdown-menu {
+  display: none;
+}
+.dropdown-menu.show {
+  display: block;
+}
+.btn-group.show .dropdown-toggle::after {
+  transform: rotate(180deg);
+}
+*/
+
+/* Menu classique masqué */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;  /* par défaut sous le bouton */
+  left: 0;
+  z-index: 1000;
+  min-width: 10rem;
+}
+
+/* Menu visible */
+.dropdown-menu.show {
+  display: block;
+}
+
+/* Version "dropup" : le menu monte au lieu de descendre */
+.dropdown-menu.dropup {
+  top: auto;           /* on enlève le positionnement par défaut */
+  bottom: 100%;        /* on positionne le menu au-dessus du bouton */
+  margin-bottom: 0.25rem; /* petit espace */
+}
+
+/* Icône de flèche éventuellement */
+.btn.dropdown-toggle::after {
+  transition: transform 0.3s;
+}
+
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8); /* voile transparent */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* au-dessus de tout */
+}
+
+.loading-overlay p {
+  margin-top: 15px;
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+}
+
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 220px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.success {
+  background-color: #4CAF50;
+}
+
+.toast.error {
+  background-color: #f44336;
+}
+
+.toast .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}

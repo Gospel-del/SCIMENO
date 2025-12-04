@@ -1,0 +1,155 @@
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title"><b> utilisateur </b> - <i>Listing</i> -</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-primary" routerLink="/users/create">
+            <i class="fas fa-plus"></i> Nouvel utilisateur
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Barre de recherche et filtres -->
+        <div class="row mb-3">
+         <!--
+          <div class="col-md-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Rechercher un client..."
+                [(ngModel)]="searchTerm"
+                (keyup.enter)="search()">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" (click)="search()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          -->
+          <!--
+          <div class="col-md-6 text-right">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="actifOnly"
+                [(ngModel)]="actifOnly"
+                (change)="toggleActifOnly()">
+              <label class="form-check-label" for="actifOnly">
+                Afficher uniquement les natures actives
+              </label>
+            </div>
+          </div>
+          -->
+        </div>
+
+        <!-- Message d'erreur -->
+        <div *ngIf="error" class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <mat-progress-spinner *ngIf="loading"
+          mode="indeterminate"
+          diameter="50"
+          style="display: block; margin: 0 auto;">
+        </mat-progress-spinner>
+
+        <!-- Tableau des utilisateurs -->
+        <div *ngIf="!loading && !error">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Fonction</th>
+                <th>Téléphone</th>
+                <th>Statut</th>
+                <th>Créé le</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.idUtilisateur }}</td>
+                <td>{{ user.getFullName() }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ fonctionMap[user.fonction || ''] }}</td>
+                <td>{{ user.telephone || 'Non renseigné' }}</td>
+                <td>
+                  <span
+                    class="badge statut-badge"
+                    [ngClass]="user.isActive() ? 'badge-actif' : 'badge-inactif'">
+                    <i class="status-icon">
+                      {{ user.isActive() ? '✔' : '✖' }}
+                    </i>
+                    {{ user.isActive() ? 'ACTIF' : 'INACTIF' }}
+                  </span>
+                </td>
+                <td>{{ user.created_at | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-info"
+                            (click)="updateUser(user)"
+                            title="Modidier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger"
+                            (click)="deleteUser(user)"
+                            title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div *ngIf="totalPages > 1" class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              <p class="text-muted mb-0">
+                Page {{ pageIndex }} sur {{ totalPages }} ({{ total }} nature(s) au total)
+              </p>
+            </div>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="pageIndex === 1">
+                  <a class="page-link" href="#" (click)="previousPage(); $event.preventDefault()">
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                </li>
+                <li *ngFor="let page of [].constructor(totalPages); let i = index"
+                    class="page-item"
+                    [class.active]="pageIndex === (i + 1)">
+                  <a class="page-link"
+                      href="#"
+                      (click)="goToPage(i + 1); $event.preventDefault()">
+                    {{ i + 1 }}
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="pageIndex === totalPages">
+                  <a class="page-link" href="#" (click)="nextPage(); $event.preventDefault()">
+                    <i class="fas fa-chevron-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

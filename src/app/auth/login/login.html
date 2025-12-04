@@ -1,0 +1,124 @@
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+
+<div class="background-animated">
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="#"><b>SCI</b> Mermo</a>
+    </div>
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Connectez-vous pour commencer votre session</p>
+
+        <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+          <div class="input-group mb-3">
+            <input
+              type="email"
+              class="form-control"
+              placeholder="Email"
+              [(ngModel)]="email"
+              name="email"
+              required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group mb-3">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Mot de passe"
+              [(ngModel)]="motDePasse"
+              name="motDePasse"
+              required>
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-8">
+              <div class="icheck-primary">
+                <input type="checkbox" id="remember">
+                <label for="remember">
+                  Se souvenir de moi
+                </label>
+              </div>
+            </div>
+            <div class="col-4">
+              <button
+                type="submit"
+                class="btn btn-primary btn-block"
+                [disabled]="isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm mr-2"></span>
+                {{ isLoading ? 'Connexion...' : 'Connexion' }}
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+
+        <p class="mb-1">
+          <a (click)="openPasswordModal()" class="clickable-link">J'ai oublié mon mot de passe</a>
+        </p>
+        <!--
+        <p class="mb-0">
+          <a href="#" class="text-center">Créer un nouveau compte</a>
+        </p>
+        -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal AdminLTE pour mot de passe oublié -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">Mot de passe oublié</h5>
+      </div>
+
+      <div class="modal-body">
+
+        <form [formGroup]="forgotPasswordForm">
+
+          <!-- Email -->
+          <div class="form-group">
+            <label>Adresse e-mail</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="Entrez votre e-mail">
+            <small class="text-danger" *ngIf="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched">
+              ⚠️ Veuillez entrer une adresse e-mail valide.
+            </small>
+          </div>
+
+        </form>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="closeForgotPasswordModal()" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-warning"
+          [disabled]="forgotPasswordForm.invalid"
+          (click)="submitForgotPassword()">
+          Reinitialiser
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

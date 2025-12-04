@@ -1,0 +1,28 @@
+<mat-dialog-content>
+  <div id="revenusTable1">
+    <div class="loading-overlay" *ngIf="isLoading || isPDFGenerate">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="70"
+        color="primary">
+      </mat-progress-spinner>
+      <p>{{ loadingMessage }}</p>
+    </div>
+    <div class="table-responsive-scroll" *ngIf="!isLoading">
+      <app-amortissement-emprunt [elements]="elts_EMP" *ngIf="data.modulName == 'EMP'"></app-amortissement-emprunt>
+      <app-revenu-previsionnels [data]="data" [titleTable]="titleTable" [indexationAnnuel]="indexationAnnuel" [croissanceVacance]="croissanceVacance" [elements]="elements1" [elts_regleCalcul]="elts_regleCalcul" [elements_CON]="elements_CON" [elements_IN]="elements_IN" *ngIf="data.modulName == 'REV' || data.modulName == 'DEP' || data.modulName == 'CON' || data.modulName == 'FIN'"></app-revenu-previsionnels>
+      <app-revenu-previsionnels [data]="data" [titleTable]="titleTable" [indexationAnnuel]="indexationAnnuel" [croissanceVacance]="croissanceVacance" [elements]="elements_IN" [elts_regleCalcul]="elts_regleCalcul" [elements_CON]="elements_CON" [elements_IN]="elements_IN" [elements_OUT]="elements_OUT" *ngIf="data.modulName == 'TRE'"></app-revenu-previsionnels>
+      <app-revenu-previsionnels [data]="data" [titleTable]="titleTable" [indexationAnnuel]="indexationAnnuel" [croissanceVacance]="croissanceVacance" [elements]="elts_REV" [elts_DEP]="elts_DEP" [elts_regleCalcul]="elts_regleCalcul" *ngIf="data.modulName == 'CRT'"></app-revenu-previsionnels>
+      <app-revenu-previsionnels [data]="data" [titleTable]="titleTable" [indexationAnnuel]="indexationAnnuel" [croissanceVacance]="croissanceVacance" [elements]="elts_IND_CLE" [elts_DEP]="elts_DEP" [elts_regleCalcul]="elts_regleCalcul" [elements_CON]="elements_CON" [elements_IN]="elements_IN" *ngIf="data.modulName == 'IND'"></app-revenu-previsionnels>
+
+    </div>
+  </div>
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end">
+  <button class="btn btn-danger" (click)="printGraph()" *ngIf="data.modulName === 'IND'">📄 Exporter Graph en PDF</button>
+  &nbsp;&nbsp;&nbsp;
+
+  <button class="btn btn-success" (click)="exportExcel()">📊 Exporter en Excel</button>
+</mat-dialog-actions>

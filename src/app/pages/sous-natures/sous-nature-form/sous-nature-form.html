@@ -1,0 +1,105 @@
+
+<mat-progress-spinner *ngIf="isLoading"
+  mode="indeterminate"
+  diameter="50"
+  style="display: block; margin: 0 auto;">
+</mat-progress-spinner>
+
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+
+<form
+  class="form-horizontal"
+  *ngIf="sousNature && !isLoading"
+  (ngSubmit)="onSubmit()"
+  #sousNatureForm="ngForm"
+>
+  <div class="card-body">
+    <!-- Champ texte simple -->
+    <div class="form-group row">
+      <label for="nomSousNature" class="col-sm-2 col-form-label">Nom <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <input
+          type="text"
+          class="form-control"
+          id="nomSousNature"
+          placeholder="Nom"
+          [disabled]="sousNature.idSousNature === -1 || sousNature.idSousNature === -2"
+          required
+          minlength="4"
+          maxlength="150"
+          [(ngModel)]="sousNature.nomSousNature"
+          name="nomSousNature"
+          #nomSousNature="ngModel"
+        />
+        <div
+          *ngIf="nomSousNature.invalid && (nomSousNature.dirty || nomSousNature.touched)"
+          class="alertInput"
+        >
+          <div *ngIf="nomSousNature.errors?.['required']">Le nom est requis.</div>
+          <div *ngIf="nomSousNature.errors?.['minlength']">
+            Le nom doit comporter au moins 4 caractères.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="typeNature" class="col-sm-2 col-form-label">Nature <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <!--
+        <select2
+          [data]="nature_group"
+          formControlName="idNature"
+          class="form-control"
+          name="idNature"
+          [value]="sousNature.idNature"
+          [styleMode]="'noStyle'"
+          [placeholder]="'Sélectionner une nature'">
+        </select2>
+        -->
+        <select2
+          class="form-control"
+          required
+          [data]="data"
+          [(ngModel)]="selectedNatureId"
+          name="selectedNatureId"
+          [styleMode]="'noStyle'"
+          [placeholder]="'Sélectionner une nature'">
+        </select2>
+      </div>
+    </div>
+
+
+    <!-- Détails -->
+    <div class="form-group row">
+      <label for="detailSousNature" class="col-sm-2 col-form-label">Détails</label>
+      <div class="col-sm-10">
+        <textarea
+          aria-label="With textarea"
+          class="form-control"
+          id="detailSousNature"
+          placeholder="Détails"
+          [(ngModel)]="sousNature.detailSousNature"
+          name="detailSousNature"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Boutons -->
+  <div class="card-footer">
+    <button type="submit" class="btn btn-info" [disabled]="!sousNatureForm.form.valid">
+      <i class="fas fa-save mr-2"></i>
+      {{ bSaveName }}
+    </button>
+    <button type="button" class="btn btn-secondary float-end" (click)="close()">Fermer</button>
+  </div>
+</form>
+
+<h3 *ngIf="!sousNature" class="center">Aucun sousNature à éditer...</h3>

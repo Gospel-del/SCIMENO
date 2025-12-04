@@ -1,0 +1,480 @@
+
+
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Gestion des scénarios</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-primary" routerLink="/scenarios/create">
+            <i class="fas fa-plus"></i> Ajouter un scénario
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Barre de recherche et filtres -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Rechercher un scénario..."
+                [(ngModel)]="searchTerm"
+                (keyup.enter)="searchScenarios()">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" (click)="searchScenarios()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 text-right">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="actifOnly"
+                [(ngModel)]="actifOnly"
+                (change)="toggleActifOnly()">
+              <label class="form-check-label" for="actifOnly">
+                Afficher uniquement les scénarios actifs
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Message d'erreur -->
+        <div *ngIf="error" class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="loading" class="text-center">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Chargement des scénarios...</p>
+        </div>
+
+        <!-- Tableau des scénarios -->
+        <div *ngIf="!loading && !error">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom du scénario</th>
+                <th>Coefficient de majoration</th>
+                <th>Description</th>
+                <th>Statut</th>
+                <th>Actif</th>
+                <th>Créé le</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let scenario of scenarios">
+                <td>{{ scenario.id_scenario }}</td>
+                <td>{{ scenario.nom_scenario }}</td>
+                <td>
+                  <span class="badge badge-info">{{ scenario.getFormattedCoefficient() }}</span>
+                </td>
+                <td>{{ scenario.description || 'Aucune description' }}</td>
+                <td>
+                  <span class="badge"
+                        [class.badge-success]="scenario.status"
+                        [class.badge-danger]="!scenario.status">
+                    {{ scenario.status ? 'Actif' : 'Supprimé' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge"
+                        [class.badge-success]="scenario.actif"
+                        [class.badge-warning]="!scenario.actif">
+                    {{ scenario.actif ? 'Oui' : 'Non' }}
+                  </span>
+                </td>
+                <td>{{ scenario.created_at | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <a class="btn btn-sm btn-info"
+                       [routerLink]="['/scenarios/edit', scenario.id_scenario]"
+                       (click)="editScenario(scenario)"
+                       title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button class="btn btn-sm"
+                            [class.btn-warning]="scenario.actif"
+                            [class.btn-success]="!scenario.actif"
+                            (click)="toggleScenarioStatus(scenario)"
+                            [title]="scenario.actif ? 'Désactiver' : 'Activer'">
+                      <i class="fas"
+                         [class.fa-toggle-on]="scenario.actif"
+                         [class.fa-toggle-off]="!scenario.actif"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger"
+                            (click)="deleteScenario(scenario)"
+                            title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Message si aucun scénario -->
+          <div *ngIf="scenarios.length === 0" class="text-center py-4">
+            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Aucun scénario trouvé</p>
+          </div>
+
+          <!-- Pagination -->
+          <div *ngIf="totalPages > 1" class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              <p class="text-muted mb-0">
+                Page {{ currentPage }} sur {{ totalPages }} ({{ total }} scénario(s) au total)
+              </p>
+            </div>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <a class="page-link" href="#" (click)="previousPage(); $event.preventDefault()">
+                    <i class="fas fa-chevron-left"></i>
+                  </a>
+                </li>
+                <li *ngFor="let page of [].constructor(totalPages); let i = index"
+                    class="page-item"
+                    [class.active]="currentPage === (i + 1)">
+                  <a class="page-link"
+                     href="#"
+                     (click)="goToPage(i + 1); $event.preventDefault()">
+                    {{ i + 1 }}
+                  </a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <a class="page-link" href="#" (click)="nextPage(); $event.preventDefault()">
+                    <i class="fas fa-chevron-right"></i>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section des liens Scenario-SousNature -->
+    <div class="card mt-4">
+      <div class="card-header">
+        <h2 class="card-title">
+          <i class="fas fa-link mr-2"></i>
+          <b>Scénario</b> - <i>Liens avec Sous-Natures</i>
+        </h2>
+        <div class="card-tools">
+          <button
+            type="button"
+            class="btn btn-sm btn-secondary mr-2"
+            (click)="toggleLinksSection()">
+            <i class="fas" [class.fa-chevron-down]="!showLinksSection" [class.fa-chevron-up]="showLinksSection"></i>
+            {{ showLinksSection ? 'Masquer' : 'Afficher' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="addScenarioSousNatureLink()"
+            [disabled]="!showLinksSection">
+            <i class="fas fa-plus"></i> Nouveau Lien
+          </button>
+          <button
+            type="button"
+            class="btn btn-info ml-2"
+            (click)="refreshLinks()"
+            [disabled]="!showLinksSection || linksLoading"
+            title="Recharger">
+            <i class="fas fa-sync-alt"></i> Rec
+          </button>
+        </div>
+      </div>
+      <div class="card-body" *ngIf="showLinksSection">
+        <!-- Filtre par scénario -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="scenarioFilter">Filtrer par scénario:</label>
+            <select
+              class="form-control"
+              id="scenarioFilter"
+              [ngModel]="selectedScenarioId"
+              (ngModelChange)="filterLinksByScenario($event)">
+              <option [ngValue]="null">Tous les scénarios</option>
+              <option *ngFor="let scenario of scenarios" [ngValue]="scenario.id_scenario">
+                {{ scenario.nom_scenario }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Message d'erreur -->
+        <div *ngIf="linksError" class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle"></i> {{ linksError }}
+        </div>
+
+        <!-- Indicateur de chargement -->
+        <div *ngIf="linksLoading" class="text-center">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Chargement des liens...</p>
+        </div>
+
+        <!-- Tableau des liens -->
+        <div *ngIf="!linksLoading && !linksError">
+          <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+              <tr>
+                <th>ID</th>
+                <th>Scénario</th>
+                <th>Sous-Nature</th>
+                <th>Catégorie</th>
+
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let elt of scenarioSousNatureElements">
+                <td>{{ elt.scenarioSousNature.id_scenario_sous_nature }}</td>
+                <td>{{ elt.scenario.nom_scenario || 'N/A' }}</td>
+                <td>{{ elt.sousNature.nomSousNature || 'N/A' }}</td>
+                <td>{{ categorieMap[elt.nature.typeNature] || 'N/A' }}</td>
+
+                <td>
+                  <button
+                    class="btn btn-sm btn-danger"
+                    (click)="deleteScenarioSousNatureLink(elt)"
+                    title="Supprimer">
+                    <i class="fas fa-trash"></i> Supprimer
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Message si aucun lien -->
+          <div *ngIf="scenarioSousNatureElements.length === 0" class="text-center py-4">
+            <i class="fas fa-link fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Aucun lien trouvé</p>
+          </div>
+
+          <!-- Pagination -->
+          <div class="card-footer clearfix" *ngIf="linksTotalPages > 1">
+            <ul class="pagination pagination-sm m-0 float-end">
+              <li class="page-item" [class.disabled]="linksPageIndex === 1">
+                <a
+                  class="page-link"
+                  href="#"
+                  (click)="onLinksPageChange(linksPageIndex - 1); $event.preventDefault()"
+                  aria-label="Précédent">
+                  &laquo;
+                </a>
+              </li>
+              <li
+                *ngFor="let page of [].constructor(linksTotalPages); let i = index"
+                class="page-item"
+                [class.active]="linksPageIndex === i + 1">
+                <a
+                  class="page-link"
+                  href="#"
+                  (click)="onLinksPageChange(i + 1); $event.preventDefault()">
+                  {{ i + 1 }}
+                </a>
+              </li>
+              <li
+                class="page-item"
+                [class.disabled]="linksPageIndex === linksTotalPages">
+                <a
+                  class="page-link"
+                  href="#"
+                  (click)="onLinksPageChange(linksPageIndex + 1); $event.preventDefault()"
+                  aria-label="Suivant">
+                  &raquo;
+                </a>
+              </li>
+            </ul>
+            <div class="float-start mt-2">
+              <p class="text-muted mb-0">
+                Page {{ linksPageIndex }} sur {{ linksTotalPages }} ({{ linksTotal }} lien(s) au total)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modale pour créer/modifier un lien Scenario-SousNature -->
+    <div *ngIf="showLinkModal" class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-link mr-2"></i>
+              {{ isEditMode ? 'Modifier le lien' : 'Nouveau lien Scénario - Sous-Nature' }}
+            </h5>
+            <button type="button" class="close" (click)="closeLinkModal()" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <!-- Message d'erreur -->
+            <div *ngIf="modalError" class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle"></i> {{ modalError }}
+            </div>
+
+            <form>
+              <!-- Recherche et sélection du scénario -->
+              <div class="form-group">
+                <label for="scenarioSearch">
+                  <strong>Scénario *</strong>
+                </label>
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="scenarioSearch"
+                    placeholder="Rechercher un scénario..."
+                    [(ngModel)]="scenarioSearchTerm"
+                    (keyup)="searchScenariosInModal()"
+                    (focus)="showScenarioTable = scenarioSearchTerm.length > 0"
+                    [disabled]="isEditMode"
+                    name="scenarioSearch">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" (click)="searchScenariosInModal()">
+                      <i class="fas fa-search"></i> Rec
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tableau de résultats de recherche -->
+                <div *ngIf="showScenarioTable && filteredScenarios.length > 0" class="mt-2">
+                  <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                    <table class="table table-sm table-bordered table-hover">
+                      <thead class="thead-light">
+                        <tr>
+                          <th>ID</th>
+                          <th>Nom du scénario</th>
+                          <th>Coefficient</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let scenario of filteredScenarios" style="cursor: pointer;">
+                          <td>{{ scenario.id_scenario }}</td>
+                          <td>{{ scenario.nom_scenario }}</td>
+                          <td>{{ scenario.getFormattedCoefficient() }}</td>
+                          <td>
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-primary"
+                              (click)="selectScenario(scenario)">
+                              <i class="fas fa-check"></i> Sélectionner
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div *ngIf="showScenarioTable && filteredScenarios.length === 0" class="mt-2 text-muted">
+                  <small>Aucun scénario trouvé</small>
+                </div>
+                <small *ngIf="modalForm.scenarioId" class="form-text text-success">
+                  <i class="fas fa-check-circle"></i> Scénario sélectionné
+                </small>
+              </div>
+
+              <!-- Sélection multiple des sous-natures -->
+              <div class="form-group">
+                <label>
+                  <strong>Sous-Natures *</strong>
+                  <small class="text-muted ml-2">
+                    ({{ modalForm.selectedSousNatureIds.length }} sélectionnée(s))
+                  </small>
+                </label>
+
+                <!-- Barre de recherche pour les sous-natures -->
+                <div class="input-group mb-2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Rechercher une sous-nature..."
+                    [(ngModel)]="sousNatureSearchTerm"
+                    (keyup)="filterSousNatures()"
+                    name="sousNatureSearch">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" (click)="filterSousNatures()">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Boutons de sélection rapide -->
+                <div class="mb-2">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary mr-1"
+                    (click)="selectAllSousNatures()"
+                    [disabled]="filteredSousNatures.length === 0">
+                    <i class="fas fa-check-double"></i> Tout sélectionner
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="deselectAllSousNatures()"
+                    [disabled]="filteredSousNatures.length === 0">
+                    <i class="fas fa-times"></i> Tout désélectionner
+                  </button>
+                </div>
+
+                <div class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
+                  <div *ngIf="filteredSousNatures.length === 0" class="text-muted text-center py-3">
+                    <i class="fas fa-info-circle"></i>
+                    {{ sousNatureSearchTerm ? 'Aucune sous-nature trouvée' : 'Aucune sous-nature disponible' }}
+                  </div>
+                  <div *ngFor="let sousNature of filteredSousNatures" class="form-check mb-2">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      [id]="'sousNature_' + sousNature.idSousNature"
+                      [checked]="isSousNatureSelected(sousNature.idSousNature)"
+                      (change)="toggleSousNatureSelection(sousNature.idSousNature)"
+                      [disabled]="isEditMode">
+                    <label
+                      class="form-check-label"
+                      [for]="'sousNature_' + sousNature.idSousNature"
+                      style="cursor: pointer; width: 100%;">
+                      <strong>{{ sousNature.nomSousNature }}</strong>
+                      <span *ngIf="getNatureName(sousNature)" class="text-muted ml-2">
+                        ({{ getNatureName(sousNature) }})
+                      </span>
+                    </label>
+                  </div>
+                </div>
+                <small class="form-text text-muted">
+                  Sélectionnez une ou plusieurs sous-natures à associer au scénario
+                </small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeLinkModal()" [disabled]="modalLoading">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="saveLink()"
+              [disabled]="modalLoading || !modalForm.scenarioId || modalForm.selectedSousNatureIds.length === 0">
+              <i class="fas fa-save"></i>
+              {{ modalLoading ? 'Enregistrement...' : 'Enregistrer (' + modalForm.selectedSousNatureIds.length + ')' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showLinkModal" class="modal-backdrop fade show"></div>
+
+
+

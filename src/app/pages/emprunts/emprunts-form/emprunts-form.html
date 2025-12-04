@@ -1,0 +1,155 @@
+<h2 mat-dialog-title><b>Emprunt </b> - <i>{{ data.title }}</i> -</h2>
+<mat-dialog-content>
+
+  <div class="card-body">
+    <div class="form-group row">
+      <label for="organismePreneur" class="col-sm-2 col-form-label"> Organisme </label>
+      <div class="col-sm-10">
+        <input
+          type="text"
+          class="form-control"
+          id="organismePreneur"
+          placeholder="Organisme preneur"
+          required
+          minlength="2"
+          maxlength="150"
+          [(ngModel)]="emprunt.organismePreneur"
+          name="organismePreneur"
+          #organismePreneur="ngModel"
+        />
+        <div
+          *ngIf="organismePreneur.invalid && (organismePreneur.dirty || organismePreneur.touched)"
+          class="alertInput"
+        >
+          <div *ngIf="organismePreneur.errors?.['required']">Le nom est requis.</div>
+          <div *ngIf="organismePreneur.errors?.['minlength']">
+            Le nom doit comporter au moins 2 caractères.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="form-group row">
+      <label for="montantEmprunte" class="col-sm-2 col-form-label"> Montant emprunté </label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="montantEmprunte"
+          placeholder="Montant emprunté"
+          maxlength="50"
+          min="0"
+          step="1"
+          (input)="checkMax($event, 0, null, montantEmprunte)"
+          [(ngModel)]="emprunt.montantEmprunte"
+          name="montantEmprunte"
+          #montantEmprunte="ngModel"
+        />
+      </div>
+
+
+      <label for="dureeCredit" class="col-sm-2 col-form-label"> Durée </label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="dureeCredit"
+          placeholder="Durée du crédit (en années)"
+          maxlength="50"
+          min="0"
+          step="1"
+          (input)="checkMax($event, 0, 100, dureeCredit)"
+          [(ngModel)]="emprunt.dureeCredit"
+          name="dureeCredit"
+          #dureeCredit="ngModel"
+        />
+      </div>
+
+    </div>
+
+    <br>
+
+    <div class="form-group row">
+      <label for="tauxInteretAnnuel" class="col-sm-2 col-form-label"> Taux d'intérêt (%) </label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="tauxInteretAnnuel"
+          placeholder="Taux d'intérêt annuel (%)"
+          required
+          min="0"
+          max="100"
+          step="0.1"
+          (input)="checkMax($event, 0, 100, tauxInteretAnnuel)"
+          [(ngModel)]="emprunt.tauxInteretAnnuel"
+          name="tauxInteretAnnuel"
+          #tauxInteretAnnuel="ngModel"
+        />
+        <div
+          *ngIf="tauxInteretAnnuel.invalid && (tauxInteretAnnuel.dirty || tauxInteretAnnuel.touched)"
+          class="alertInput"
+        >
+          <div *ngIf="tauxInteretAnnuel.errors?.['required']">Le taux est requis.</div>
+          <div *ngIf="tauxInteretAnnuel.errors?.['min']">
+            Le taux doit être ≥ 0.
+          </div>
+          <div *ngIf="tauxInteretAnnuel.errors?.['max']">
+            Le taux doit être ≤ 100.
+          </div>
+        </div>
+      </div>
+
+      <label for="idModeAmortissement" class="col-sm-2 col-form-label"> Mode d'amortissement </label>
+      <div class="col-sm-4">
+        <select class="form-control select2 select2-hidden-accessible"
+          style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+          [(ngModel)]="emprunt.modeAmortissement"
+          name="modeAmortissement">
+            <option value="" disabled selected>-- Sélectionnez un mode d'amortissement --</option>
+            <option *ngFor="let elt of modeAmortissements" [value]="elt.id">{{ elt.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="form-group row">
+      <label for="dateDebutPret" class="col-sm-2 col-form-label"> Date début du prêt </label>
+      <div class="col-sm-4">
+        <input
+          type="date"
+          class="form-control input-date"
+          id="dateDebutPret"
+          placeholder="Date de début du prêt "
+          maxlength="50"
+          [(ngModel)]="emprunt.dateDebutPret"
+          name="dateDebutPret"
+          #dateDebutPret="ngModel"
+        />
+      </div>
+
+
+      <label for="datePremiereEcheance" class="col-sm-2 col-form-label"> Date première échéance </label>
+      <div class="col-sm-4">
+        <input
+          type="date"
+          class="form-control input-date"
+          id="datePremiereEcheance"
+          placeholder="Date première échéance"
+          maxlength="50"
+          [(ngModel)]="emprunt.datePremiereEcheance"
+          name="datePremiereEcheance"
+          #datePremiereEcheance="ngModel"
+        />
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ data.cancel }}</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()"
+      [disabled]="!isValid()">{{ data.valid }}</button>
+</mat-dialog-actions>

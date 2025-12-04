@@ -1,0 +1,177 @@
+
+<mat-progress-spinner *ngIf="isLoading"
+  mode="indeterminate"
+  diameter="50"
+  style="display: block; margin: 0 auto;">
+</mat-progress-spinner>
+
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+
+<form
+  class="form-horizontal"
+  *ngIf="regleCalcul && !isLoading"
+  (ngSubmit)="onSubmit()"
+  #regleCalculForm="ngForm"
+>
+  <div class="card-body">
+    <!-- Champ texte simple -->
+    <div class="form-group row">
+      <label for="nomSousNature" class="col-sm-2 col-form-label">Nom <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <select2
+          class="form-control"
+          required
+          [data]="data"
+          [(ngModel)]="selectedSousNatureId"
+          name="selectedSousNatureId"
+          [styleMode]="'noStyle'"
+          [placeholder]="'Sélectionner une sous-nature'"
+          (update)="removeSelect()"
+          >
+        </select2>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="typeCalcul" class="col-sm-2 col-form-label"> Opération <span class="text-danger">*</span></label>
+      <div class="col-sm-2">
+        <select class="form-control select2 select2-hidden-accessible"
+        style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+        [(ngModel)]="regleCalcul.typeCalcul"
+        required
+        name="typeCalcul">
+          <option value="" disabled selected>-- Sélectionnez une categorie --</option>
+          <option *ngFor="let type of typeRegleList" [ngValue]="type.key">
+            {{ type.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3 form-check col-sm-2">
+        <input type="checkbox" class="form-check-input" id="TauxVariable"
+          [(ngModel)]="TauxVariable"
+          name="TauxVariable">
+        <label class="form-check-label" for="TauxVariable">Taux variable</label>
+      </div>
+
+      <label for="tauxRegleCalcul" class="col-sm-2 col-form-label" *ngIf="!TauxVariable"> Valeur (%)</label>
+      <div class="col-sm-4" *ngIf="!TauxVariable">
+        <input
+          type="text"
+          class="form-control"
+          id="tauxRegleCalcul"
+          placeholder="Taux (%)"
+          maxlength="80"
+          step="1"
+          (input)="checkMax($event, 0, 100, tauxRegleCalcul)"
+          [(ngModel)]="regleCalcul.tauxRegleCalcul"
+          name="tauxRegleCalcul"
+          #tauxRegleCalcul="ngModel"
+        />
+      </div>
+    </div>
+
+
+    <div class="form-group row">
+      <label for="typeNature" class="col-sm-2 col-form-label"> </label>
+      <div class="col-sm-10">
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="cummulAnnee"
+            [(ngModel)]="cummulAnnee"
+            name="cummulAnnee">
+          <label class="form-check-label" for="cummulAnnee">Cummulable par année</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <h4 class="mt-0 ">categories</h4>
+      <ul class="nav nav-tabs" id="custom-content-above-tab" role="tablist">
+        <li class="nav-item" *ngFor="let elt of typeCategorieList; let i = index">
+          <a
+            class="nav-link"
+            [class.active]="i === 0"
+            [id]="'tab-' + elt.key + '-tab'"
+            data-toggle="pill"
+            [attr.href]="'#tab-' + elt.key"
+            role="tab"
+            [attr.aria-controls]="'tab-' + elt.key"
+            [attr.aria-selected]="i === 0"
+          >
+            {{ elt.label }}
+          </a>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="custom-content-above-tabContent">
+        <div *ngFor="let cat of dualList; let i = index" [id]="'tab-' + cat.key" class="tab-pane fade" [class.show]="i === 0" [class.active]="i === 0" role="tabpanel" [attr.aria-labelledby]="'tab-' + cat.key + '-tab'">
+
+          <div class="duallistbox-container" style="display:flex; gap: 1rem; align-items: center;">
+            <!-- Liste de gauche -->
+            <div class="list-box" style="flex: 1;">
+              <label>Showing all {{cat.leftList.length}}</label>
+              <!--
+              <input type="text" placeholder="Filter" [(ngModel)]="cat.leftFilter" (ngModelChange)="filterLeft(cat)" class="form-control mb-2">
+              -->
+              <input type="text" [(ngModel)]="cat.leftFilter" (ngModelChange)="filterSubject.next({cat, side:'left'})" [ngModelOptions]="{standalone: true}" class="form-control mb-2">
+              <button type="button" class="btn btn-outline-secondary btn-block mb-2 col-sm-5" (click)="moveAllToRight(cat)">>></button>
+              <label class="col-sm-2 col-form-label"> </label>
+              <button type="button" class="btn btn-outline-secondary btn-block mb-2 col-sm-5" (click)="moveSelectedToRight(cat)">></button>
+              <select multiple size="10" class="form-control" style="width:100%" (change)="onLeftSelectChange($event, cat)">
+                <option *ngFor="let item of cat.filteredLeftList; trackBy: trackBySousNatureId"
+                [selected]="isSelectedLeft(item, cat)"
+                [disabled]="item.sousNature.idSousNature.toString() === selectedSousNatureId"
+                (dblclick)="moveSelectedToRight(cat)">
+                <!--
+                [ngClass]="{'grayed-out': item.sousNature.idSousNature.toString() === selectedSousNatureId}"
+                -->
+                  {{ item.sousNature.nomSousNature }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Liste de droite -->
+            <div class="list-box" style="flex: 1;">
+              <label>Empty list {{cat.rightList.length === 0 ? '' : '(' + cat.rightList.length + ')'}}</label>
+              <input type="text" placeholder="Filter" [(ngModel)]="cat.rightFilter" (ngModelChange)="filterRight(cat)" [ngModelOptions]="{standalone: true}"
+              class="form-control mb-2">
+
+              <button type="button" class="btn btn-outline-secondary btn-block mb-2 col-sm-5" (click)="moveAllToLeft(cat)"><<</button>
+              <label class="col-sm-2 col-form-label"> </label>
+              <button type="button" class="btn btn-outline-secondary btn-block mb-2 col-sm-5" (click)="moveSelectedToLeft(cat)">></button>
+
+              <select multiple size="10" class="form-control"
+              style="width:100%"
+              (change)="onRightSelectChange($event, cat)">
+                <option *ngFor="let item of cat.filteredRightList"
+                [selected]="isSelectedRight(item, cat)"
+                (dblclick)="moveSelectedToLeft(cat)">
+                  {{ item.sousNature.nomSousNature }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Boutons -->
+  <div class="card-footer">
+    <button type="submit" class="btn btn-info" [disabled]="!regleCalculForm.form.valid || loading">
+      <i class="fas fa-save mr-2"></i>
+      {{ bSaveName }}
+    </button>
+    <button type="button" class="btn btn-secondary float-end" (click)="close()">Fermer</button>
+  </div>
+</form>
+
+<h3 *ngIf="!regleCalcul" class="center">Aucune Regle à éditer...</h3>

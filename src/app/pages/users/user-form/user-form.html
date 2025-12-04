@@ -1,0 +1,118 @@
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+<form
+  class="form-horizontal"
+  *ngIf="user"
+  (ngSubmit)="onSubmit()"
+  #userForm="ngForm"
+>
+  <div class="card-body">
+    <div class="form-group row">
+      <label for="nom" class="col-sm-2 col-form-label"> Nom <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <input
+          type="text"
+          class="form-control"
+          id="nom"
+          placeholder="Nom"
+          required
+          minlength="4"
+          max="150"
+          [(ngModel)]="user.nom"
+          name="nom"
+          #nom="ngModel"
+        />
+        <div
+          *ngIf="nom.invalid && (nom.dirty || nom.touched)"
+          class="alertInput"
+        >
+          <div *ngIf="nom.errors?.['required']">Le nom est requis.</div>
+          <div *ngIf="nom.errors?.['minlength']">
+            Le nom doit comporter au moins 4 caractères.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="prenom" class="col-sm-2 col-form-label"> Prénom </label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="prenom"
+          placeholder="Prénom"
+          maxlength="50"
+          [(ngModel)]="user.prenom"
+          name="prenom"
+          #prenom="ngModel"
+        />
+      </div>
+
+      <label for="fonction" class="col-sm-2 col-form-label"> Fonction <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <select class="form-control select2 select2-hidden-accessible"
+        style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+        [(ngModel)]="user.fonction"
+        required
+        name="fonction">
+          <option value="-1" disabled selected>-- Sélectionnez une fonction --</option>
+          <option *ngFor="let elt of fonctionUserList" [ngValue]="elt.key">
+            {{ elt.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="email" class="col-sm-2 col-form-label"> Email <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="email"
+          required
+          placeholder="Email"
+          maxlength="50"
+          [(ngModel)]="user.email"
+          name="email"
+          #email="ngModel"
+        />
+      </div>
+
+      <label for="telephone" class="col-sm-2 col-form-label"> Téléphone </label>
+      <div class="col-sm-4">
+        <input
+          type="text"
+          class="form-control"
+          id="telephone"
+          placeholder="Téléphone"
+          maxlength="10"
+          [(ngModel)]="user.telephone"
+          name="telephone"
+          #telephone="ngModel"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- card-footer -->
+  <div class="card-footer">
+    <button
+      type="submit"
+      class="btn btn-info"
+      [disabled]="!userForm.form.valid"
+    >
+      {{bSaveName}}
+    </button>
+    <button type="button" class="btn btn-secondary float-end" (click)="close()">Fermer</button>
+  </div>
+  <!-- /.card-footer -->
+</form>
+
+<h3 *ngIf="!user" class="center">Aucun Utilisateur à éditer...</h3>

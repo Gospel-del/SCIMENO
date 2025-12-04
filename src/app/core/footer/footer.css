@@ -1,0 +1,129 @@
+/* =========================== */
+/* FOOTER PREMIUM + DASHBOARD - VERSION COMPACT */
+/* =========================== */
+
+.main-footer {
+  background: linear-gradient(90deg, #71abee, #4725db); /* Dégradé bleu */
+  color: white;
+  padding: 8px 15px;   /* <-- moins d’espace vertical */
+  font-size: 13px;      /* texte légèrement plus petit */
+  border-top: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gloss animation */
+.main-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: rgba(255,255,255,0.05);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  animation: gloss 4s infinite linear;
+}
+
+@keyframes gloss {
+  0% { left: -50%; }
+  50% { left: 100%; }
+  100% { left: -50%; }
+}
+
+/* LINKS & SOCIAL */
+.footer-left a {
+  color: #ffeb3b;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.footer-left a:hover {
+  color: #fff;
+}
+
+.footer-links a {
+  margin-right: 8px;
+  font-size: 14px;      /* légèrement plus petit */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-links a:hover {
+  transform: scale(1.15);
+  color: #fff;
+}
+
+/* KPI MINI CARDS */
+.footer-center {
+  gap: 8px;
+}
+
+.kpi-card {
+  background: rgba(255,255,255,0.15);
+  padding: 3px 8px;   /* <-- padding réduit */
+  border-radius: 6px;
+  text-align: center;
+  min-width: 50px;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.kpi-card:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.kpi-number {
+  font-weight: 700;
+  font-size: 16px;    /* légèrement plus petit */
+  display: block;
+}
+
+.kpi-label {
+  font-size: 11px;    /* plus compact */
+  display: block;
+  margin-top: 1px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  opacity: 0.8;
+}
+
+/* RIGHT SIDE */
+.footer-right .separator {
+  margin: 0 6px;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ICON ANIMATION */
+.footer-right i,
+.footer-left i {
+  margin-right: 3px;
+  color: #ffeb3b;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-right i:hover,
+.footer-left i:hover {
+  transform: rotate(20deg) scale(1.15);
+  color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .footer-left, .footer-center, .footer-right {
+    justify-content: center !important;
+    margin: 3px 0;
+    text-align: center;
+  }
+
+  .footer-center {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .footer-right .separator {
+    display: none;
+  }
+}

@@ -1,0 +1,572 @@
+<div class="loading-overlay" *ngIf="isLoading && projet">
+  <mat-progress-spinner
+    mode="indeterminate"
+    diameter="70"
+    color="primary">
+  </mat-progress-spinner>
+  <p>{{ loadingMessage || "Chargement ..." }}</p>
+</div>
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+<form
+  class="form-horizontal"
+  *ngIf="projet"
+  (ngSubmit)="onSubmit()"
+  #projetForm="ngForm"
+>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary card-outline">
+          <!-- card-header -->
+          <div class="card-header">
+            <h2 class="card-title"><b>Information sur le client </b></h2>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+
+            <div class="form-group row">
+  <label for="selectedClient" class="col-sm-2 col-form-label">Nom du client</label>
+  <div class="col-sm-10">
+    <select
+      id="selectedClient"
+      class="form-control select2-client"
+      style="width: 100%;"
+      [(ngModel)]="selectedClient"
+      (change)="onSelectClient()"
+      required
+      name="selectedClient"
+    >
+      <option value="-1" disabled selected>-- Sélectionnez un client --</option>
+      <option *ngFor="let client of clients" [ngValue]="client">
+        {{ getNomPrenomClient(client) }}
+      </option>
+    </select>
+  </div>
+</div>
+
+
+            <div class="form-group row">
+              <label for="email" class="col-sm-2 col-form-label"> Email </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="email"
+                  required
+                  disabled="true"
+                  placeholder="Email"
+                  maxlength="50"
+                  [(ngModel)]="selectedClient.email"
+                  name="email"
+                  #email="ngModel"
+                />
+              </div>
+
+              <label for="entreprise" class="col-sm-2 col-form-label"> Entreprise </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="entreprise"
+                  disabled="true"
+                  placeholder="Nom de l'entreprise"
+                  maxlength="80"
+                  [(ngModel)]="selectedClient.entreprise"
+                  name="entreprise"
+                  #entreprise="ngModel"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- form end -->
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card card-primary card-outline">
+          <!-- card-header -->
+          <div class="card-header">
+            <h2 class="card-title"><b>Information sur le projet </b></h2>
+          </div>
+          <!-- /.card-header -->
+           <div class="card-body">
+            <div class="form-group row">
+              <label for="nomProjet" class="col-sm-2 col-form-label"> Nom </label>
+              <div class="col-sm-10">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nomProjet"
+                  placeholder="Nom"
+                  required
+                  minlength="4"
+                  max="150"
+                  [(ngModel)]="projet.nomProjet"
+                  name="nomProjet"
+                  #nomProjet="ngModel"
+                />
+                <div
+                  *ngIf="nomProjet.invalid && (nomProjet.dirty || nomProjet.touched)"
+                  class="alertInput"
+                >
+                  <div *ngIf="nomProjet.errors?.['required']">Le nom est requis.</div>
+                  <div *ngIf="nomProjet.errors?.['minlength']">
+                    Le nom doit comporter au moins 4 caractères.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="created_at" class="col-sm-2 col-form-label"> Date </label>
+              <div class="col-sm-4">
+                <input
+                  type="date"
+                  class="form-control input-date"
+                  id="created_at"
+                  placeholder="date de creation"
+                  max="150"
+                  readonly
+                  disabled="true"
+                  [(ngModel)]="projet.created_at"
+                  name="created_at"
+                  #created_at="ngModel"
+                />
+              </div>
+
+              <label for="localisation" class="col-sm-2 col-form-label"> Localisation </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="localisation"
+                  placeholder="localisation (ville, quartier, pays)"
+                  max="150"
+                  [(ngModel)]="projet.localisation"
+                  name="localisation"
+                  #localisation="ngModel"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="typeProjet" class="col-sm-2 col-form-label"> Type de projet </label>
+              <div class="col-sm-4">
+                <select class="form-control select2 select2-hidden-accessible"
+                style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+                [(ngModel)]="projet.typeProjet"
+                name="typeProjet">
+                  <option value="" disabled selected>-- Sélectionnez un type de projet --</option>
+                  <option *ngFor="let typeProjet of typeProjets" [value]="typeProjet.id">
+                    {{ typeProjet.name }}
+                  </option>
+                </select>
+              </div>
+
+
+              <label for="modeExploitation" class="col-sm-2 col-form-label"> Mode d'exploitation </label>
+              <div class="col-sm-4">
+                <select class="form-control select2 select2-hidden-accessible"
+                style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+                [(ngModel)]="projet.modeExploitation"
+                name="modeExploitation">
+                  <option value="" disabled selected>-- Sélectionnez un Mode d'exploitation --</option>
+                  <option *ngFor="let modeExploitation of modeExploitations" [value]="modeExploitation.id">
+                    {{ modeExploitation.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="statutJuridique" class="col-sm-2 col-form-label"> Statut juridique </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="statutJuridique"
+                  placeholder="Statut juridique de la SCI (si existante)"
+                  max="150"
+                  [(ngModel)]="projet.statutJuridique"
+                  name="statutJuridique"
+                  #statutJuridique="ngModel"
+                />
+              </div>
+
+              <label for="typeLocataireCible" class="col-sm-2 col-form-label"> Type de locataires ciblés </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="typeLocataireCible"
+                  placeholder="Type de locataires ciblés"
+                  max="150"
+                  [(ngModel)]="projet.typeLocataireCible"
+                  name="typeLocataireCible"
+                  #typeLocataireCible="ngModel"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="dureeProjet" class="col-sm-2 col-form-label"> Durée du projet </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="dureeProjet"
+                  placeholder="Durée du projet (en année)"
+                  step="1"
+                  (input)="checkMax($event, 0, 100, dureeProjet)"
+                  [(ngModel)]="projet.dureeProjet"
+                  (ngModelChange)="onDureeProjetChange()"
+                  name="dureeProjet"
+                  #dureeProjet="ngModel"
+                />
+              </div>
+
+              <label for="superficieTerrain" class="col-sm-2 col-form-label"> Superficie du terrain (m2) </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="superficieTerrain"
+                  placeholder="Superficie du terrain (m²)"
+                  step="1"
+                  (input)="checkMax($event, 0, null, superficieTerrain)"
+                  [(ngModel)]="projet.superficieTerrain"
+                  name="superficieTerrain"
+                  #superficieTerrain="ngModel"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="superficieConstruite" class="col-sm-2 col-form-label"> Superficie construite/rénovée </label>
+              <div class="col-sm-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="superficieConstruite"
+                  placeholder="Superficie construite ou rénovée (m²)"
+                  (input)="checkMax($event, 0, null, superficieConstruite)"
+                  [(ngModel)]="projet.superficieConstruite"
+                  name="superficieConstruite"
+                  #superficieConstruite="ngModel"
+                />
+              </div>
+
+              <label for="nombreAnneesProjet" class="col-sm-2 col-form-label"> Nbre d'années de projection </label>
+              <div class="col-sm-4">
+                <input
+                  class="form-control"
+                  id="nombreAnneesProjet"
+                  placeholder="Nombre d'années de projection (prévisionnel)"
+                  type="text"
+                  step="1"
+                  onkeydown="return event.key !== '.' && event.key !== ','"
+                  (input)="checkMax($event, 0, 100, nombreAnneesProjet)"
+                  [(ngModel)]="projet.nombreAnneesProjet"
+                  name="nombreAnneesProjet"
+                  #nombreAnneesProjet="ngModel"
+                />
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="selectedScenarioId" class="col-sm-2 col-form-label"> Scénario </label>
+              <div class="col-sm-4">
+                <select class="form-control select2 select2-hidden-accessible"
+                style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+                [(ngModel)]="selectedScenarioId"
+                (change)="applyRestaureScenario(selectedScenarioId || -1)"
+                name="selectedScenarioId">
+                  <option value="-1" disabled selected>Sélectionner un scénario...</option>
+                  <option *ngFor="let s of scenarios" [value]="s.id_scenario">
+                    {{ s.nom_scenario }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-sm-3">
+                <button
+                  type="button"
+                  class="btn"
+                  [ngClass]="isApplyScenario ? 'btn-info' : 'btn-warning'"
+                  [disabled]="(selectedScenarioId || -1) < 0"
+                  (click)="applyRestaureScenario(selectedScenarioId || -1, false)">
+
+                  <!-- Icône dynamique -->
+                  <i class="fas mr-1"
+                    [ngClass]="isApplyScenario ? 'fa-play' : 'fa-undo'">
+                  </i>
+
+                  <!-- Texte dynamique -->
+                  {{ isApplyScenario ? "Appliquer l'optimisation" : "Restaurer l'optimisation" }}
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="informationsComplementaires" class="col-sm-2 col-form-label"> Détails </label>
+              <div class="col-sm-10">
+                <textarea
+                  aria-label="With textarea"
+                  class="form-control"
+                  id="informationsComplementaires"
+                  placeholder="Information complementaire"
+                  maxlength="50"
+                  [(ngModel)]="projet.informationsComplementaires"
+                  name="informationsComplementaires"
+                  #informationsComplementaires="ngModel"
+                >
+                </textarea>
+              </div>
+            </div>
+
+
+            <div class="form-group row">
+              <h4 class="mt-0 ">Carasteristiques du projet</h4>
+              <ul class="nav nav-tabs" id="custom-content-above-tab" role="tablist">
+                <li class="nav-item" *ngFor="let elt of typeCategorieList; let i = index">
+                  <a
+                    class="nav-link"
+                    [class.active]="i === 0"
+                    [id]="'tab-' + elt.key + '-tab'"
+                    data-toggle="pill"
+                    [attr.href]="'#tab-' + elt.key"
+                    role="tab"
+                    [attr.aria-controls]="'tab-' + elt.key"
+                    [attr.aria-selected]="i === 0"
+                  >
+                    {{ elt.label }}
+                  </a>
+                </li>
+              </ul>
+
+              <div class="tab-content" id="custom-content-above-tabContent">
+                <div *ngFor="let tab of tabs; let tabIndex = index"
+                 [id]="'tab-' + tab.key" class="tab-pane fade"
+                 [class.show]="tabIndex === 0" [class.active]="tabIndex === 0"
+                 role="tabpanel" [attr.aria-labelledby]="'tab-' + tab.key + '-tab'">
+
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="card card-primary card-outline">
+                        <div class="card-header">
+                          <h2 class="card-title"><i>{{ tab.title }}</i></h2>
+                          <div class="card-tools">
+                            <button type="button" class="btn btn-primary" (click)="openPopupGeneric(tab.key)">
+                              <i class="fas fa-plus"></i> Ajouter un element
+                            </button>
+                          </div>
+                        </div>
+
+                        <div class="card-body">
+                          <mat-progress-spinner *ngIf="tab.isLoading" mode="indeterminate" diameter="50" style="display: block; margin: 0 auto;"></mat-progress-spinner>
+
+                          <div class="table-scroll-wrapper" *ngIf="!tab.isLoading">
+                            <table class="table table-bordered table-hover">
+                              <thead>
+                                <!-- Ligne 1 -->
+                                <tr>
+                                  <ng-container *ngFor="let col of tab.columns">
+                                    <th *ngIf="!col.subColumns" [attr.rowspan]="2" align="center">{{ col.header }}</th>
+                                    <th *ngIf="col.subColumns" [attr.colspan]="col.subColumns.length" align="center">{{ col.header }}</th>
+                                  </ng-container>
+                                  <th rowspan="2" align="center">Option</th>
+                                </tr>
+
+                                <!-- Ligne 2 (sous-colonnes) -->
+                                <tr>
+                                  <ng-container *ngFor="let col of tab.columns">
+                                    <ng-container *ngIf="col.subColumns">
+                                      <th *ngFor="let sub of col.subColumns" align="center">{{ sub.header }}</th>
+                                    </ng-container>
+                                  </ng-container>
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                <tr *ngFor="let elt of tab.dataList; let i = index">
+                                  <ng-container *ngFor="let col of tab.columns">
+
+                                    <td *ngIf="!col.subColumns">
+                                      <ng-container [ngSwitch]="col.type">
+                                        <span *ngSwitchCase="'text'">{{ getValue(elt, col.model || '') }}</span>
+                                        <input *ngSwitchCase="'number'" type="number"
+                                              class="form-control"
+                                              [id]="col.model || '' + i"
+                                              [name]="col.model || '' + i"
+                                              [placeholder]="col.placeholder"
+                                              [max]="col.max || 1"
+                                              [(ngModel)]="elt[col.model || '']">
+                                        <i *ngSwitchCase="'custom'" class="valeur-opt">{{ getValue(elt, col.model || '') }}</i>
+                                      </ng-container>
+                                    </td>
+
+                                    <ng-container *ngIf="col.subColumns">
+                                      <td *ngFor="let sub of col.subColumns">
+                                        <ng-container [ngSwitch]="sub.type">
+                                          <span *ngSwitchCase="'text'">{{ getValue(elt, sub.model || '') }}</span>
+                                          <input *ngSwitchCase="'number'" type="number"
+                                                class="form-control"
+                                                [id]="sub.model || '' + i"
+                                                [name]="sub.model || '' + i"
+                                                [placeholder]="sub.placeholder"
+                                                [max]="sub.max || 1"
+                                                [value]="getNestedValue(elt, sub.model || '')"
+                                                (input)="setNestedValue(elt, sub.model || '', $event.target.value)">
+
+                                          <i *ngIf="sub.optModel" class="valeur-opt">
+                                            {{ getNestedValue(elt, sub.optModel || '') }}
+                                          </i>
+
+                                          <i *ngSwitchCase="'custom'" class="valeur-opt">{{ getValue(elt, sub.model || '') }}</i>
+                                        </ng-container>
+                                      </td>
+                                    </ng-container>
+                                  </ng-container>
+
+                                  <td class="action-buttons">
+                                    <div class="btn-group" role="group">
+                                      <button *ngIf="tab.isUpdate" type="button" class="btn btn-sm btn-info mr-1" (click)="updateElt(tab.key, elt)">
+                                        <i class="fas fa-edit"></i>
+                                      </button>
+                                      <button type="button" class="btn btn-sm btn-danger" (click)="supprimerElt(tab.key, elt)">
+                                        <i class="fas fa-trash"></i>
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  &nbsp;&nbsp;&nbsp;
+
+
+                  <ng-container *ngFor="let sub of tab.subDataList">
+                    <mat-progress-spinner *ngIf="tab.isLoading" mode="indeterminate" diameter="50" style="display: block; margin: 0 auto;"></mat-progress-spinner>
+
+                    <div class="col-12" *ngIf="!tab.isLoading">
+                      <div class="card card-primary card-outline">
+                        <div class="card-header">
+                          <h2 class="card-title"><i>{{ sub.title }}</i></h2>
+                        </div>
+
+                        <div class="card-body">
+                          <mat-progress-spinner *ngIf="sub.isLoading"
+                                                mode="indeterminate"
+                                                diameter="50"
+                                                style="display: block; margin: 0 auto;">
+                          </mat-progress-spinner>
+
+                          <div class="table-scroll-wrapper">
+                            <table class="table table-bordered" *ngIf="!sub.isLoading">
+                              <thead class="thead-dark">
+                                <!-- Ligne 1 -->
+                                <tr>
+                                  <ng-container *ngFor="let col of sub.columns">
+                                    <th *ngIf="!col.subColumns" [attr.rowspan]="2" align="center">{{ col.header }}</th>
+                                    <th *ngIf="col.subColumns" [attr.colspan]="col.subColumns.length" align="center">{{ col.header }}</th>
+                                  </ng-container>
+                                </tr>
+
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let row of sub.dataList; let i = index; trackBy: trackRow">
+                                  <td *ngFor="let col of sub.columns">
+                                    <ng-container [ngSwitch]="col.type">
+                                      <span *ngSwitchCase="'text'">{{ getValue(row, col.model || '')}}</span>
+
+                                      <input *ngSwitchCase="'number'"
+                                            type="number"
+                                            class="form-control"
+                                            [id]="(col.model || '') + '_' + tab.key + '_' + i"
+                                            [name]="(col.model || '') + '_' + tab.key + '_' + i"
+                                            (input)="checkMaxTable($event, 0, col.max || 1, row, col.model || '')"
+
+
+                                            [placeholder]="col.placeholder"
+                                            [max]="col.max || 1"
+                                            [(ngModel)]="row[col.model || '']">
+                                      <i *ngSwitchCase="'custom'" class="valeur-opt">{{ getValue(row, col.model || '') }}</i>
+                                    </ng-container>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-footer d-flex align-items-center justify-content-between">
+    <!-- Bouton Enregistrer -->
+    <button
+      type="submit"
+      class="btn btn-info"
+      [disabled]="!projetForm.form.valid || isLoading">
+
+      {{ isRetryMode ? 'Réessayer' : bSaveName }}
+    </button>
+
+    <!-- Dropdown Imprimer -->
+    <div class="dropdown-container position-relative ms-2" #dropdown>
+      <button type="button"
+              class="btn btn-primary dropdown-toggle"
+              (click)="toggleDropdown()">
+        Imprimer
+      </button>
+
+      <ul class="dropdown-menu"
+          [class.show]="isOpen"
+          [class.dropup]="dropUp">
+
+        <!-- Génération automatique -->
+        <li *ngFor="let fiche of FicheImpressionList">
+          <a class="dropdown-item" (click)="printRapport(fiche.key)">
+            {{ fiche.label }}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Bouton Fermer -->
+    <button type="button"
+            class="btn btn-secondary ms-auto"
+            (click)="close()">
+      Fermer
+    </button>
+  </div>
+  <!-- /.card-footer -->
+</form>
+
+<h3 *ngIf="!projet" class="center">Aucun projet à éditer...</h3>

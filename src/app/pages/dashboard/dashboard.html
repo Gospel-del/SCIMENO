@@ -1,0 +1,107 @@
+<!-- Welcome Message -->
+<!--
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-home mr-2"></i>
+          Tableau de bord
+        </h3>
+      </div>
+      <div class="card-body">
+        <div class="text-center">
+          <h1 class="display-4 text-primary">
+            <i class="fas fa-user-shield mr-3"></i>
+            Bienvenue <span *ngIf="currentUser$ | async as user">{{ user.prenom }} {{ user.nom }}</span>
+          </h1>
+          <p class="lead">Gérez votre système avec facilité</p>
+          <hr>
+          <p>Utilisez le menu de gauche pour naviguer dans les différentes sections :</p>
+          <div class="row mt-4">
+            <div class="col-md-4">
+              <div class="info-box" (click)="openLink('/users')">
+                <span class="info-box-icon bg-info">
+                  <i class="fas fa-users"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Utilisateurs</span>
+                  <span class="info-box-number">Gestion des utilisateurs</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="info-box" (click)="openLink('/projets')">
+                <span class="info-box-icon bg-success">
+                  <i class="fas fa-project-diagram"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Projets</span>
+                  <span class="info-box-number">Gestion des projets</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="info-box" (click)="openLink('/clients')">
+                <span class="info-box-icon bg-warning">
+                  <i class="fas fa-user-tie"></i>
+                </span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Clients</span>
+                  <span class="info-box-number">Gestion des clients</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+
+
+
+<div class="dashboard-container">
+
+  <div class="header-card">
+    <h1 class="welcome-title">
+      <i class="fas fa-user-shield"></i>
+      Bienvenue
+      <span *ngIf="currentUser$ | async as user">{{ user.prenom }} {{ user.nom }}</span>
+    </h1>
+    <p class="subtitle">Gérez votre système avec simplicité et efficacité</p>
+  </div>
+
+  <div class="modules-grid">
+
+    <!-- Bloc : Utilisateurs -->
+    <div class="module-card" (click)="openLink('/users')">
+      <div class="icon-wrapper bg-info">
+        <i class="fas fa-users"></i>
+      </div>
+      <h3>Utilisateurs</h3>
+      <p>Gestion des comptes utilisateurs</p>
+    </div>
+
+    <!-- Bloc : Projets -->
+    <div class="module-card" (click)="openLink('/projets')">
+      <div class="icon-wrapper bg-success">
+        <i class="fas fa-project-diagram"></i>
+      </div>
+      <h3>Projets</h3>
+      <p>Organisation et pilotage de projets</p>
+    </div>
+
+    <!-- Bloc : Clients -->
+    <div class="module-card" (click)="openLink('/clients')">
+      <div class="icon-wrapper bg-warning">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <h3>Clients</h3>
+      <p>Gestion et suivi des clients</p>
+    </div>
+
+  </div>
+
+</div>

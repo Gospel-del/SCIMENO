@@ -1,0 +1,157 @@
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">
+          <i class="fas fa-project-diagram mr-2"></i>
+          <b> Projet </b> - <i>Listing</i> -
+        </h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-primary"  (click)="addProjet()">
+            <i class="fas fa-plus"></i> Nouveau projet
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Rechercher un projet..."
+                [(ngModel)]="searchTerm"
+                (keyup.enter)="search()">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" (click)="search()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <!--
+          <div class="col-md-6 text-right">
+            <div class="form-check form-check-inline">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="actifOnly"
+                [(ngModel)]="actifOnly"
+                (change)="toggleActifOnly()">
+              <label class="form-check-label" for="actifOnly">
+                Afficher uniquement les natures actives
+              </label>
+            </div>
+          </div>
+          -->
+        </div>
+
+        <!-- Message d'erreur -->
+        <div *ngIf="error" class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle"></i> {{ error }}
+        </div>
+
+
+        <mat-progress-spinner *ngIf="isLoading && !error"
+          mode="indeterminate"
+          diameter="50"
+          style="display: block; margin: 0 auto;">
+          <p>Chargement des projets...</p>
+        </mat-progress-spinner>
+        <table class="table table-bordered table-hover" *ngIf="!isLoading && !error">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Client</th>
+              <th>Type</th>
+              <th>Durée</th>
+              <th>Statut</th>
+              <th>Date de création</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let projet of projets">
+              <td>{{ projet.idProjet }}</td>
+              <td>{{ projet.nomProjet }}</td>
+              <td>{{ projet.client_nom ?? '' }}</td>
+              <td>{{ typeProjetsMap[+projet.typeProjet] || 'Non défini' }}</td>
+              <td>{{ projet.dureeProjet }}</td>
+              <td>
+                <!--
+                <span class="badge badge-info" *ngIf="projet.statut === 'En cours'">{{ projet.statut }}</span>
+                <span class="badge badge-success" *ngIf="projet.statut === 'Terminé'">{{ projet.statut }}</span>
+                <span class="badge badge-warning" *ngIf="projet.statut === 'En attente'">{{ projet.statut }}</span>
+                -->
+              </td>
+              <td>{{ projet.created_at | date:'yyyy-MM-dd' }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button class="btn btn-sm btn-info" (click)="updateProjet(projet, false)">
+                    <i class="fas fa-edit"></i> Modifier
+                  </button>
+                  <button class="btn btn-sm btn-warning mr-1" (click)="updateProjet(projet, true)">
+                    <i class="fas fa-clone"></i> Duppliquer
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="supprimerProjet(projet)">
+                    <i class="fas fa-trash"></i> Supprimer
+                  </button>
+                  <!--
+                  <button class="btn btn-sm"
+                          [class.btn-warning]="projet.statut"
+                          [class.btn-success]="!projet.statut"
+                          (click)="supprimerProjet(projet)"
+                          [title]="projet.statut">
+                    <i class="fas"
+                        [class.fa-toggle-on]="projet.statut"
+                        [class.fa-toggle-off]="!projet.statut"></i>
+                  </button>
+                  -->
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      <!-- Pagination -->
+        <div *ngIf="totalPages > 1" class="d-flex justify-content-between align-items-center mt-3">
+          <div>
+            <p class="text-muted mb-0">
+              Page {{ pageIndex }} sur {{ totalPages }} ({{ total }} nature(s) au total)
+            </p>
+          </div>
+          <nav>
+            <ul class="pagination mb-0">
+              <li class="page-item" [class.disabled]="pageIndex === 1">
+                <a class="page-link" href="#" (click)="previousPage(); $event.preventDefault()">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+              <li *ngFor="let page of [].constructor(totalPages); let i = index"
+                  class="page-item"
+                  [class.active]="pageIndex === (i + 1)">
+                <a class="page-link"
+                    href="#"
+                    (click)="goToPage(i + 1); $event.preventDefault()">
+                  {{ i + 1 }}
+                </a>
+              </li>
+              <li class="page-item" [class.disabled]="pageIndex === totalPages">
+                <a class="page-link" href="#" (click)="nextPage(); $event.preventDefault()">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

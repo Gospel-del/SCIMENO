@@ -1,0 +1,136 @@
+/* Table */
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(17, 17, 17, 0.1);
+}
+
+.table thead th {
+  background-color: #5d83a9;
+  color: white;
+  text-align: center;
+}
+
+.table tbody td {
+  vertical-align: middle;
+}
+
+.table-row-hover:hover {
+  background-color: #f1f3f5;
+  transition: background 0.25s ease;
+}
+
+/* Styles pour la page des scénarios */
+
+/* Styles pour la modale de lien Scenario-SousNature */
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+.modal-dialog {
+  z-index: 1050;
+}
+
+.modal-content {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+}
+
+/* Tableau de recherche de scénarios */
+.table-responsive {
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.table-sm thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Styles pour les boutons */
+.btn-group .btn {
+  margin-right: 0.25rem;
+}
+
+/* Amélioration de l'apparence des formulaires */
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Indicateur de chargement */
+.modal-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 0.80rem;
+  border-radius: 999px; /* full pill */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: white !important;
+}
+
+/* États personnalisés */
+.badge-success {
+  background-color: #28a745 !important;
+}
+
+.badge-danger {
+  background-color: #dc3545 !important;
+}
+
+
+
+.badge-warning {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+/* Hover (optionnel) */
+.badge:hover {
+  opacity: 0.9;
+  cursor: default;
+}
+
+.badge-info {
+  background-color: #17a2b8 !important; /* bleu info */
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 12px;
+  font-weight: 600;
+}

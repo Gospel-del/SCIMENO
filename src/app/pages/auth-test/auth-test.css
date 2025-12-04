@@ -1,0 +1,71 @@
+/* ===================== */
+/* KPI CARDS             */
+/* ===================== */
+.kpi-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+.kpi-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+.kpi-icon {
+  flex-shrink: 0;
+}
+.kpi-content {
+  margin-left: 15px;
+}
+.kpi-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.kpi-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-info {
+  background: linear-gradient(120deg, #36d1dc, #5b86e5) !important;
+}
+.bg-gradient-success {
+  background: linear-gradient(120deg, #1cc88a, #28a745) !important;
+}
+.bg-gradient-warning {
+  background: linear-gradient(120deg, #f6c23e, #f8a13f) !important;
+}
+.bg-gradient-primary {
+  background: linear-gradient(120deg, #4e73df, #1cc88a) !important;
+}
+.bg-gradient-secondary {
+  background: linear-gradient(120deg, #858796, #6c757d) !important;
+}
+
+/* Card hover effect */
+.card {
+  border-radius: 12px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* List group inside cards */
+.list-group-item {
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+}
+
+/* Badges */
+.badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35em 0.6em;
+}
+.badge-success { background-color: #28a745; color: white; }
+.badge-danger { background-color: #dc3545; color: white; }

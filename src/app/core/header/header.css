@@ -1,0 +1,215 @@
+/* =========================== */
+/* HEADER (compatible AdminLTE) */
+/* =========================== */
+
+.custom-navbar {
+  background: linear-gradient(90deg, #71abee, #4725db); /* Dégradé bleu */
+  color: white; /* Texte par défaut blanc */
+  height: 60px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* ombre subtile */
+}
+
+/* Logo */
+.brand-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: white !important;
+}
+
+/* =========================== */
+/* MENU PRINCIPAL (onglets)    */
+/* =========================== */
+
+.nav-tab {
+  color: white !important; /* Texte blanc pour gradient */
+  font-weight: 500;
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+/* Hover effet moderne */
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Soulignement animé */
+.nav-tab::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 20%;
+  width: 0;
+  height: 3px;
+  background: #ffeb3b; /* couleur jaune accent */
+  transition: width 0.25s ease;
+  border-radius: 50px;
+}
+
+.nav-tab:hover::after {
+  width: 60%;
+}
+
+/* =========================== */
+/* USER MENU                   */
+/* =========================== */
+
+.user-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white !important;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* Dropdown */
+.user-dropdown-menu {
+  animation: fadeIn 0.25s ease;
+  border-radius: 6px;
+  background: white;
+  color: #333;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.user-dropdown-menu .dropdown-item i {
+  width: 20px;
+  text-align: center;
+}
+
+.logout {
+  color: #d63031 !important;
+  font-weight: 600;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-link,
+.dropdown-item {
+  cursor: pointer;
+}
+
+
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 220px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.success {
+  background-color: #4CAF50;
+}
+
+.toast.error {
+  background-color: #f44336;
+}
+
+.toast .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Conteneur de la barre de force */
+.strength-bar {
+  height: 6px;
+  width: 100%;
+  background-color: #e0e0e0; /* gris clair */
+  border-radius: 3px;
+  margin-top: 5px;
+  margin-bottom: 2px;
+  overflow: hidden;
+}
+
+/* Barre dynamique selon force */
+.strength-bar div {
+  height: 100%;
+  width: 100%;
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Force faible */
+.strength-bar .weak {
+  background-color: #dc3545; /* rouge */
+  width: 33%;
+}
+
+/* Force moyenne */
+.strength-bar .medium {
+  background-color: #ffc107; /* jaune */
+  width: 66%;
+}
+
+/* Force forte */
+.strength-bar .strong {
+  background-color: #28a745; /* vert */
+  width: 100%;
+}
+
+/* Label texte sous la barre */
+.strength-bar + small {
+  display: block;
+  font-weight: 500;
+  margin-top: 2px;
+  color: #6c757d; /* gris bootstrap */
+}
+
+/* Texte rouge pour erreur mot de passe confirmation */
+.text-danger {
+  font-size: 0.85rem;
+  margin-top: 2px;
+  display: block;
+}

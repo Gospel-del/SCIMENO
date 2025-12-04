@@ -1,0 +1,116 @@
+.grayed-out {
+  color: #999; /* texte gris */
+  background-color: #f0f0f0; /* fond légèrement gris */
+}
+
+
+
+.builder-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 10px;
+  background: #fafafa;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+
+.formule-display {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.formule-box {
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  min-height: 40px;
+  font-family: monospace;
+}
+
+
+
+
+.clear {
+  background-color: #dc3545;
+}
+
+.clear:hover {
+  background-color: #a71d2a;
+}
+
+.save {
+  background-color: #28a745;
+}
+
+.save:hover {
+  background-color: #1e7e34;
+}
+
+.calc {
+  background-color: #17a2b8;
+}
+
+.calc:hover {
+  background-color: #117a8b;
+}
+
+.result {
+  margin-top: 15px;
+  font-size: 18px;
+  background: #e3f7e6;
+  border: 1px solid #a4d7b5;
+  padding: 10px;
+  border-radius: 5px;
+  color: #155724;
+}
+
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  min-width: 220px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast.success {
+  background-color: #4CAF50;
+}
+
+.toast.error {
+  background-color: #f44336;
+}
+
+.toast .close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}

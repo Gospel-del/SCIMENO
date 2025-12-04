@@ -1,0 +1,97 @@
+
+<!-- Toasts -->
+<div class="toast-container">
+  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" [class.show]="toast.visible">
+    {{ toast.message }}
+    <button class="close-btn" (click)="closeToast(toast)">×</button>
+  </div>
+</div>
+
+<form
+  class="form-horizontal"
+  *ngIf="nature"
+  (ngSubmit)="onSubmit()"
+  #natureForm="ngForm"
+>
+  <div class="card-body">
+    <div class="form-group row">
+      <label for="nomNature" class="col-sm-2 col-form-label"> Nom <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <input
+          type="text"
+          class="form-control"
+          id="nomNature"
+          placeholder="Nom"
+          [disabled]="nature.idNature === -1 || nature.idNature === -2"
+          required
+          minlength="4"
+          maxlength="150"
+          [(ngModel)]="nature.nomNature"
+          name="nomNature"
+          #nomNature="ngModel"
+        />
+        <div
+          *ngIf="nomNature.invalid && (nomNature.dirty || nomNature.touched)"
+          class="alertInput"
+        >
+          <div *ngIf="nomNature.errors?.['required']">Le nom est requis.</div>
+          <div *ngIf="nomNature.errors?.['minlength']">
+            Le nom doit comporter au moins 4 caractères.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="typeNature" class="col-sm-2 col-form-label"> Catégorie <span class="text-danger">*</span></label>
+      <div class="col-sm-10">
+        <select class="form-control select2 select2-hidden-accessible"
+        style="width: 100%;" data-select2-id="1" tabindex="-1" aria-hidden="true"
+        [disabled]="nature.idNature === -1 || nature.idNature === -2"
+        [(ngModel)]="nature.typeNature"
+        required
+        name="typeNature">
+          <option value="" disabled selected>-- Sélectionnez une categorie --</option>
+
+          <option *ngFor="let type of typeCategorieList" [ngValue]="type.key">
+            {{ type.label }}
+          </option>
+
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label for="detailNature" class="col-sm-2 col-form-label"> Détails </label>
+      <div class="col-sm-10">
+        <textarea
+          aria-label="With textarea"
+          class="form-control"
+          id="detailNature"
+          placeholder="Détail"
+          [(ngModel)]="nature.detailNature"
+          name="detailNature"
+          #detailNature="ngModel"
+        >
+        </textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- card-footer -->
+  <div class="card-footer">
+    <button
+      type="submit"
+      class="btn btn-info"
+      [disabled]="!natureForm.form.valid || loading"
+    >
+      <i class="fas fa-save mr-2"></i>
+      {{bSaveName}}
+    </button>
+    <button type="button" class="btn btn-secondary float-end" (click)="close()">Fermer</button>
+  </div>
+  <!-- /.card-footer -->
+</form>
+
+<h3 *ngIf="!nature" class="center">Aucun nature à éditer...</h3>

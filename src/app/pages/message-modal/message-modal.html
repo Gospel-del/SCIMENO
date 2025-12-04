@@ -1,0 +1,9 @@
+<h2 mat-dialog-title >Erreur(s) détectée(s)</h2>
+<mat-dialog-content>
+  <ul>
+    <li *ngFor="let err of errors">{{ err }}</li>
+  </ul>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-raised-button color="primary" (click)="close()">Fermer</button>
+</mat-dialog-actions>

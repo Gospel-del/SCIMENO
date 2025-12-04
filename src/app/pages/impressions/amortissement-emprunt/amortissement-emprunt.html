@@ -1,0 +1,47 @@
+<table class="table table-bordered" id="revenusTable" #revenusTable>
+  <thead>
+    <tr>
+      <th class="head-title" colspan="7" style="text-align: center;">{{ titleTable }}</th>
+    </tr>
+    <tr style="height: 15px;"></tr>
+  </thead>
+  <tbody>
+    <ng-container *ngFor="let elt of elements; let idx = index">
+
+      <tr>
+        <td rowspan="2" style="text-align: center; vertical-align: middle;">
+          {{ elt.nom }}
+        </td>
+        <td colspan="6" class="head-table" style="text-align: center;">
+          <strong>{{ elt.data?.organismePreneur }}</strong>
+        </td>
+      </tr>
+      <tr>
+        <td class="nature-elt"><strong>Année</strong></td>
+        <td class="nature-elt"><strong>Capital restant dû</strong></td>
+        <td class="nature-elt"><strong>Intérêts</strong></td>
+        <td class="nature-elt"><strong>Amortissement</strong></td>
+        <td class="nature-elt"><strong>Annuité</strong></td>
+        <td class="nature-elt"><strong>Valeur nette</strong></td>
+      </tr>
+
+      <ng-container *ngFor="let i of getRange(elt.annee.length); let j = index">
+        <tr>
+          <td *ngIf="j === 0" [attr.rowspan]="elt.annee.length" class="nature-elt"
+              style="text-align: center; vertical-align: middle;">
+            <strong>Emprunt {{ idx + 1 }}</strong>
+          </td>
+          <td>N + {{ elt.annee[i] }}</td>
+          <td>{{ formatNumber(elt.montant[i] || 0) }}</td>
+          <td>{{ formatNumber(elt.autreElts?.[i]?.interet || 0) }}</td>
+          <td>{{ formatNumber(elt.autreElts?.[i]?.amortiCapital || 0) }}</td>
+          <td>{{ formatNumber(elt.autreElts?.[i]?.annuite || 0) }}</td>
+          <td>{{ formatNumber(elt.autreElts?.[i]?.valeurNet || 0) }}</td>
+
+        </tr>
+      </ng-container>
+
+      <tr style="height: 15px;"></tr>
+    </ng-container>
+  </tbody>
+</table>

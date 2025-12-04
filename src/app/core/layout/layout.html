@@ -1,0 +1,43 @@
+<div class="wrapper">
+  <div class="content-wrapper">
+    <app-header [structuredMenu] = "filteredMenu" (menuClicked)="onMenuClick($event)"></app-header>
+
+    <!-- Ruban des sous-menus
+    <div class="submenu-ribbon" *ngIf="showSubmenuRibbon()">-->
+    <div class="submenu-ribbon" *ngIf="showRibbon">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="submenu-container">
+              <div class="submenu-items">
+                <a *ngFor="let item of getSubmenuItems()"
+                   [routerLink]="item.path"
+                   class="submenu-item"
+                   [class.active]="isSubmenuItemActive(item.path || [])">
+                  <i [class]="item.iconClasses"></i>
+                  <span>{{ item.name }}</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="content-container" [ngClass]="getContentClass()">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <app-footer></app-footer>
+  </div>
+</div>

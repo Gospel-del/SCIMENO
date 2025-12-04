@@ -1,0 +1,93 @@
+/* === Container général === */
+.dashboard-container {
+  padding: 2rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* === Titre d'accueil === */
+.header-card {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.welcome-title {
+  font-size: 2.4rem;
+  color: #f7f8f9;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.welcome-title i {
+  color: #2c2d2e;
+  font-size: 2.5rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #d4ebf2;
+  margin-top: 0.3rem;
+}
+
+/* === Grille des modules === */
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+/* === Cartes modules === */
+.module-card {
+  background: white;
+  padding: 1.8rem 1.5rem;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.module-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* === Icônes === */
+.icon-wrapper {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  color: white;
+}
+
+.bg-info { background: #101111; }
+.bg-success { background: #00b894; }
+.bg-warning { background: #fdcb6e; }
+
+/* === Texte des cartes === */
+.module-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 0.3rem;
+}
+
+.module-card p {
+  color: #367b92;
+  font-size: 0.95rem;
+}
+
+/* === Animation du container === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

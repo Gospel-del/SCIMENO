@@ -1,0 +1,30 @@
+mat-dialog-content {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+mat-dialog-actions button {
+  margin-left: 10px;
+}
+
+
+.input-percent {
+  position: relative;
+  display: inline-block;
+}
+
+.input-percent input {
+  width: 100px;
+  padding-right: 25px; /* espace pour le % */
+  text-align: right;
+}
+
+.input-percent::after {
+  content: '%';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none;
+}
