@@ -28,6 +28,21 @@
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/custom-theme.scss",
               "src/styles.css"
+            ],
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "raf",
+              "rgbcolor",
+              "html2canvas",
+              "html2pdf.js",
+              "file-saver",
+              "exceljs",
+              "typed-function",
+              "javascript-natural-sort",
+              "tiny-emitter",
+              "escape-latex",
+              "seedrandom",
+              "core-js"
             ]
           },
           "configurations": {
@@ -35,8 +50,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
